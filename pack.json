@@ -1,0 +1,7 @@
+{
+	"name": "fnaf 1",
+	"description": "fnaf 1 in psych engine",
+	"restart": false,
+	"runsGlobally": false,
+	"color": [0, 0, 0]
+}
