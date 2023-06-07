@@ -93,6 +93,7 @@ leftLightUsage = 0
 rightLightUsage = 0
 
 died = false
+staticAltValB = nil
 
 -- extra script shit --
 timers = {
@@ -106,7 +107,8 @@ timers = {
 		else die() end
 	end,
 	['circusSound'] = function() if getRandomInt(1, 30) == 1 then soundPlay('circus', false, 0.05) end end,
-	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPounding', false, 0.6) end end
+	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPounding', false, 0.6) end end,
+	['thing'] = function() staticAltValB = math.random(0, 3) end
 }
 
 function onCreatePost()
@@ -210,7 +212,6 @@ function onCreatePost()
 	makeAnimatedLuaSprite('static', 'fnaf1/static')
 	addAnimationByPrefix('static', 'a', 'static', 60)
 	setGraphicSize('static', screenWidth, screenHeight)
-	setProperty('static.alpha', 0.3)
 
 	makeLuaSprite('camBorder', 'fnaf1/camBorder', 0, 0) -- the border on the cameras
 	setGraphicSize('camBorder', screenWidth, screenHeight)
@@ -314,6 +315,7 @@ function onCreatePost()
 
 	runTimer('circusSound', 5 / playbackRate, 0)
 	runTimer('doorPoundingSound', 10 / playbackRate, 0)
+	runTimer('thing', 1 / playbackRate, 0)
 end
 
 function onCameraOpen()
@@ -360,6 +362,8 @@ function onCameraOpen()
 
 	addLuaSprite('camChangeAnim')
 	setLuaCamera('camChangeAnim', 'ui')
+
+	setProperty('static.alpha', clickteamToFlixelAlpha(150 + math.random(0, 50) + (staticAltValB * 15)))
 end
 
 -- camera system
@@ -372,6 +376,7 @@ function onCameraUpdate()
 		end
 	end
 
+	setProperty('static.alpha', clickteamToFlixelAlpha(150 + math.random(0, 50) + (staticAltValB * 15)))
 	setProperty('curCamSpr.x', (curCam == 9 or curCam == 6) and 0 or getProperty('moveCamPos'))
 end
 
@@ -641,6 +646,7 @@ function onDestroy()
 	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine") 
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', false)
 end
+function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
 function round(num, decimal_places) return math.floor(num * (10 ^ (decimal_places or 0)) + 0.5) / (10 ^ (decimal_places or 0)) end
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
 function curTimerLength(timer) 
