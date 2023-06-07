@@ -23,15 +23,10 @@ void mainImage(void) {
     float offset = (dx*.2) * dy;
     
     float dir = 0.;
-    if (uv.y <= .5) 
-        dir = 1.0;
-    else
-        dir = -1.;
+    if (uv.y <= .5) dir = 1.0;
+    else dir = -1.;
     
-    vec2 coords = vec2(uv.x, uv.y + dx*(offset*depth*dir));
-    
+    vec2 coords = vec2(uv.x, uv.y + dx * (offset * depth * dir));
     vec2 nuv = coords;
-    //vec2 nuv = coords + vec2(iMouse.x/mouse_speed_divisor,0.);
-    
     fragColor = texture(iChannel0, nuv); 
 }

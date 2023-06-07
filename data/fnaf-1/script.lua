@@ -181,6 +181,8 @@ function onCreatePost()
 	makeLuaSprite('scroll', nil, 640, 359) -- the scroll thing that makes you go left and right
 	setLuaCamera('scroll', 'visuals')
 
+	runHaxeCode('getVar("visuals").follow(game.getLuaObject("scroll", false));')
+
 	if shadersEnabled then
 		makeLuaSprite('temporaryShader')
 		setSpriteShader('temporaryShader', 'shader')
@@ -438,7 +440,6 @@ function onUpdate(elapsed)
 	if (getProperty('scroll.x') <= 640) or ((getProperty('scroll.x') + 1024 / 2 + camVelocity) >= 1464) then
 		setProperty('scroll.x', (getProperty('scroll.x') <= 640 and 639) or ((getProperty('scroll.x') + 1024 / 2 + camVelocity) >= 1464 and 950))
 	end
-	runHaxeCode('getVar("visuals").follow(game.getLuaObject("scroll", false));')
 
 	-- cam opening system
 	mouseOverlapCamera = luaSpriteExists('cameraHitbox') and mouseOverlap('cameraHitbox', 'other')
