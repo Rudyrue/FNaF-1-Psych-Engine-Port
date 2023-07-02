@@ -23,17 +23,17 @@ curCam = 1-- current camera you are on
 cameraButtons = { -- camera button positions need i say less
 	-- [cam] = {x, y}
 	
-	[1] = {905, 320},
-	[2] = {890, 376},
-	[3] = {905, 570},
-	[4] = {1010, 570},
-	[5] = {782, 405},
-	[6] = {1110, 535},
-	[7] = {1117, 403},
-	[8] = {905, 610},
-	[9] = {825, 551},
-	[10] = {1010, 610},
-	[11] = {851, 456}
+	[1] = {955, 335},
+	[2] = {940, 391},
+	[3] = {955, 585},
+	[4] = {1060, 585},
+	[5] = {832, 420},
+	[6] = {1160, 550},
+	[7] = {1167, 418},
+	[8] = {955, 625},
+	[9] = {875, 566},
+	[10] = {1060, 620},
+	[11] = {901, 471}
 }
 
 cameras = { -- camera sprites
@@ -216,20 +216,20 @@ function onCreatePost()
 	makeLuaSprite('camBorder', 'fnaf1/camBorder', 0, 0) -- the border on the cameras
 	setGraphicSize('camBorder', screenWidth, screenHeight)
 
-	makeLuaSprite('map', 'fnaf1/map', 800, 300) -- the map on the cameras
+	makeLuaSprite('map', 'fnaf1/map', 850, 315) -- the map on the cameras
 	
 	for i = 1, #cameraButtons do -- all of the camera buttons
 		makeLuaSprite('cam' .. i .. 'ButtonSpr', 'fnaf1/camButton', cameraButtons[i][1], cameraButtons[i][2])
 		makeLuaSprite('cam' .. i .. 'ButtonTxt', 'fnaf1/cameras/cam' .. i, getProperty('cam' .. i .. 'ButtonSpr.x') + 5, getProperty('cam' .. i .. 'ButtonSpr.y') + 7)
 	end
 
-	makeLuaSprite('curCamTxt', nil, 780, 280) -- the current camera in text
+	makeLuaSprite('curCamTxt', nil, 830, 280) -- the current camera in text
 
 	makeAnimatedLuaSprite('camChangeAnim', 'fnaf1/camChange') -- the white static animation thing that plays when you change cameras
 	addAnimationByPrefix('camChangeAnim', 'a', 'camChange', 42, false)
 	setGraphicSize('camChangeAnim', screenWidth, screenHeight)
 
-	makeLuaSprite('cameraButton', 'fnaf1/cameraButton', 300, 640) -- the camera monitor's button
+	makeLuaSprite('cameraButton', 'fnaf1/cameraButton', 290, 640) -- the camera monitor's button
 	addLuaSprite('cameraButton', true)
 	setLuaCamera('cameraButton', 'ui')
 
@@ -239,28 +239,28 @@ function onCreatePost()
 
 	makeLuaSprite('powerLeftTxt', 'fnaf1/powerLeftTxt', 40, screenHeight - 90)
 	addLuaSprite('powerLeftTxt', true)
-	scaleObject('powerLeftTxt', 1.2, 1.2)
+	scaleObject('powerLeftTxt', 1.1, 1.1)
 	setLuaCamera('powerLeftTxt', 'ui')
 
-	makeLuaText('powerTxt', math.floor(power / 10), 100, getProperty('powerLeftTxt.x') + 125, getProperty('powerLeftTxt.y') - 14)
+	makeLuaText('powerTxt', math.floor(power / 10), 100, getProperty('powerLeftTxt.x') + 108, getProperty('powerLeftTxt.y') - 14)
 	setTextAlignment('powerTxt', 'right')
 	setTextFont('powerTxt', 'fnafFont.ttf')
-	setTextSize('powerTxt', 60)
+	setTextSize('powerTxt', 56)
 	setTextBorder('powerTxt', 0, '0x0')
 	addLuaText('powerTxt', true)
 	setLuaCamera('powerTxt', 'ui')
 
 	makeLuaSprite('percentage', 'fnaf1/percentage', getProperty('powerTxt.x') + 105, getProperty('powerTxt.y') + 15)
-	scaleObject('percentage', 1.2, 1.2)
+	scaleObject('percentage', 1.1, 1.1)
 	addLuaSprite('percentage', true)
 	setLuaCamera('percentage', 'ui')
 
-	makeLuaSprite('usageTxt', 'fnaf1/usageTxt', 40, getProperty('powerLeftTxt.y') + 35)
+	makeLuaSprite('usageTxt', 'fnaf1/usageTxt', 40, getProperty('powerLeftTxt.y') + 38)
 	addLuaSprite('usageTxt', true)
-	scaleObject('usageTxt', 1.2, 1.2)
+	scaleObject('usageTxt', 1.1, 1.1)
 	setLuaCamera('usageTxt', 'ui')
 
-	makeAnimatedLuaSprite('usageMeter', 'fnaf1/usageMeter', getProperty('usageTxt.x') + (getProperty('usageTxt.width') + 15), getProperty('usageTxt.y') - 5)
+	makeAnimatedLuaSprite('usageMeter', 'fnaf1/usageMeter', getProperty('usageTxt.x') + (getProperty('usageTxt.width') + 15), getProperty('usageTxt.y') - 8)
 	addAnimationByPrefix('usageMeter', 'a', 'usage', 0, false)
 	addLuaSprite('usageMeter', true)
 	setLuaCamera('usageMeter', 'ui')
@@ -292,7 +292,7 @@ function onCreatePost()
 	makeLuaSprite('audioOnly', 'fnaf1/audioOnly', 0, 50)
 	screenCenter('audioOnly', 'x')
 
-	makeLuaSprite('redCircle', 'fnaf1/redCircle', 70, 50) -- the red circle thingie on cams again
+	makeLuaSprite('redCircle', 'fnaf1/redCircle', 70, 51) -- the red circle thingie on cams again
 
 	soundLoad('camMonitor', 'fnaf1/camMonitor')
 	soundLoad('deskFan', 'fnaf1/deskFan', true)
