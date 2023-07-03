@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="2178" height="2012">
+  <SubTexture name="fred 0000" x="3" y="3" width="720" height="1280" rotated="true"  frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="fred 0001" x="3" y="1289"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="fred 0002" x="729" y="3" width="720" height="1280" rotated="true"  frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="fred 0003" x="1455" y="3" width="720" height="1280" rotated="true"  frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+</TextureAtlas>

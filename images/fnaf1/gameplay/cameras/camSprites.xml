@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="4510" height="3212">
+  <SubTexture name="cam10Default0000" x="3" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam11Default0000" x="3" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam1All0000" x="729" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam2Default0000" x="729" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Default0000" x="1455" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Default0001" x="1455" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam4Default0000" x="2181" y="3"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam5Default0000" x="3787" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam60000" x="2181" y="729"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam7Default0000" x="2181" y="1455"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam8Default0000" x="3787" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam9Default0000" x="2181" y="2181"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+</TextureAtlas>

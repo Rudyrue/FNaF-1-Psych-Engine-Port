@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="2738" height="2904">
+  <SubTexture name="static 0000" x="3" y="3"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0001" x="1289" y="3"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0002" x="3" y="729" width="720" height="1280" rotated="true"  frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0003" x="3" y="2015"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0004" x="729" y="729" width="720" height="1280" rotated="true"  frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0005" x="1455" y="729"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0006" x="1455" y="1455"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+  <SubTexture name="static 0007" x="1289" y="2181"  width="1280" height="720" frameX="-0" frameY="-0" frameWidth="1280" frameHeight="720"/>
+</TextureAtlas>
