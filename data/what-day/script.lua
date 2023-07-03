@@ -29,7 +29,7 @@ function onCreatePost()
 end
 
 function onUpdate()
-	date.valueA = date.valueA + 1
+	date.valueA = date.valueA + (1 * playbackRate)
 	if date.valueA > 130 and not luaTweenExists('dateAlpha') then doTweenAlpha('dateAlpha', 'date', 0, 1 / playbackRate, 'linear') end
 end
 
