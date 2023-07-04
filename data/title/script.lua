@@ -26,6 +26,7 @@ tweens = {
 		setProperty('camOther.visible', false)
 
 		setDataFromSave('fnaf1', 'night', 1)
+		setDataFromSave('fnaf1', 'realNight', 1)
 		flushSaveData('fnaf1')
 	end,
 	['adAlpha2'] = function() 
@@ -90,6 +91,7 @@ function onCreatePost()
 	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
 	if getDataFromSave('fnaf1', 'beat6') ~= true then setDataFromSave('fnaf1', 'beat6', false) end
 	if getDataFromSave('fnaf1', 'night') > 5 then setDataFromSave('fnaf1', 'night', 5) end
+	if getDataFromSave('fnaf1', 'realNight') == nil then setDataFromSave('fnaf1', 'realNight', 1) end
 	flushSaveData('fnaf1')
 
 	addHaxeLibrary('FlxSound', 'flixel.system')
@@ -160,7 +162,7 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', getDataFromSave('fnaf1', 'night'), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
+	makeLuaText('night', getDataFromSave('fnaf1', 'realNight'), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
 	setTextFont('night', 'fnafFont.ttf')
 	setTextSize('night', 35)
 	setTextBorder('night', 0, '0x0')

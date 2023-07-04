@@ -28,7 +28,7 @@ function onCreatePost()
 	addAnimationByPrefix('date', 'a', 'time', 0, false)
 	addLuaSprite('date')
 	setObjectCamera('date', 'other')
-	setProperty('date.animation.curAnim.curFrame', getDataFromSave('fnaf1', 'night') - 1)
+	setProperty('date.animation.curAnim.curFrame', getDataFromSave('fnaf1', getDataFromSave('fnaf1', 'realNight') < 5 and 'realNight' or 'night') - 1)
 
 	makeAnimatedLuaSprite('blip', 'fnaf1/what day/blip')
 	addAnimationByPrefix('blip', 'a', 'blip', 45, false)

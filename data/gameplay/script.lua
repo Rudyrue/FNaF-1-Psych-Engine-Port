@@ -167,7 +167,9 @@ tweens = {
 		doTweenY('win5Y', 'win5', 186, 5 / playbackRate, 'linear')
 		soundPlay('chimes')
 
-		if night < 5 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
+		if night < 5 then 
+			setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
+			setDataFromSave('fnaf1', 'realNight', getDataFromSave('fnaf1', 'realNight') + 1)
 		else setDataFromSave('fnaf1', 'night', 5) end
 		flushSaveData('fnaf1')
 	end,
@@ -259,7 +261,7 @@ function onCreate()
         Application.current.window.setIcon(icon);
     ]])
 
-	night = getDataFromSave('fnaf1', 'night')
+	night =  getDataFromSave('fnaf1', getDataFromSave('fnaf1', 'realNight') < 5 and 'realNight' or 'night')
 end
 
 function onCreatePost()
@@ -475,7 +477,7 @@ function onCreatePost()
 
 	soundPlay('bgHum', false, 0.3)
 	soundPlay('deskFan', false, 0.4)
-	if getDataFromSave('fnaf1', 'night') <= 5 then soundPlay('call' .. getDataFromSave('fnaf1', 'night')) end
+	if night <= 5 then soundPlay('call' .. night) end
 
 	runTimer('clock', 540 / playbackRate)
 	runTimer('redCircleVisible', 1 / playbackRate, 0)
