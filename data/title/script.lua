@@ -17,6 +17,16 @@ timers = {
 	['fredGlitch'] = function()
 		fred.valueA = getRandomInt(1, 100) - 1
 		setProperty('blip.alpha', clickteamToFlixelAlpha((getRandomInt(1, 100) - 1) + 100))
+	end,
+	['ad'] = function() doTweenAlpha('adAlpha2', 'ad', 0, 2, 'linear') end
+}
+
+tweens = {
+	['adAlpha1'] = function() setProperty('camOther.visible', false) end,
+	['adAlpha2'] = function() 
+		loadSong('what-day')
+		soundStop('music')
+		soundStop('static')
 	end
 }
 
@@ -25,6 +35,27 @@ curSelected = 0
 curSelectPositions = {
 	[1] = {104, 407}, -- new game
 	[2] = {104, 479} -- continue
+}
+
+substatesCreate = {
+	['newGame'] = function()
+		makeLuaSprite('ad', 'fnaf1/ad/newspaper')
+		addLuaSprite('ad')
+		setLuaCamera('ad', 'newGame')
+		setProperty('ad.alpha', 0)
+		doTweenAlpha('adAlpha1', 'ad', 1, 2, 'linear')
+
+		runTimer('ad', 5 / playbackRate)
+	end
+}
+
+substatesUpdate = {
+	['newGame'] = function()
+		if (keyboardJustPressed('ENTER') or mouseClicked()) and not luaTweenExists('adAlpha2') and getProperty('ad.alpha') == 1 then 
+			cancelTimer('ad')
+			doTweenAlpha('adAlpha2', 'ad', 0, 2 / playbackRate, 'linear') 
+		end
+	end
 }
 
 newGameOptionCooldown = 0
@@ -41,6 +72,8 @@ function onCreatePost()
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
+
+	makeCamera('newGame')
 
 	makeAnimatedLuaSprite('fred', 'fnaf1/title/fred')
 	addAnimationByPrefix('fred', 'a', 'fred', 0, false)
@@ -147,6 +180,9 @@ function onUpdate(elapsed)
 
 	if keyboardJustPressed('ENTER') or ((mouseOverlap('newGame', 'other') or mouseOverlap('continue', 'other')) and mouseClicked()) then
 		switch(curSelected, {
+			[0] = function()
+				openCustomSubstate('newGame', true)
+			end,
 			[1] = function()
 				loadSong('what-day')
 				soundStop('music')
@@ -172,15 +208,45 @@ function changeSelection(a)
 end
 
 function onPause() return Function_Stop end
+function onCustomSubstateCreate(t) if substatesCreate[t] then substatesCreate[t]() end end
+function onCustomSubstateUpdate(t) if substatesUpdate[t] then substatesUpdate[t]() end end
+function luaTweenExists(tag) return runHaxeCode("return game.modchartTweens.exists('" .. tag .. "')") end
 function switch(case, cases) if cases[case] ~= nil then return cases[case]() elseif cases.default ~= nil then return cases.default() end end
 function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
+function onTweenCompleted(t) if tweens[t] then tweens[t]() end end
 function mouseOverlap(obj, mouseCamera, offsetX, offsetY)
 	offsetX = offsetX or 0
 	offsetY = offsetY or 0
 	local overlapX = (getMouseX(mouseCamera) + offsetX) >= getProperty(obj .. '.x') and (getMouseX(mouseCamera) + offsetX) <= getProperty(obj .. '.x') + getProperty(obj .. '.width')
 	local overlapY = (getMouseY(mouseCamera) + offsetY) >= getProperty(obj .. '.y') and (getMouseY(mouseCamera) + offsetY) <= getProperty(obj .. '.y') + getProperty(obj .. '.height')
 	return overlapX and overlapY
+end
+function makeCamera(tag, x, y, transparent, width, height)
+	transparent = transparent or false
+	x = x or 0
+	y = y or 0
+	width = width or screenWidth
+	height = height or screenHeight
+	runHaxeCode([[
+		var ]] .. tag .. [[ = new FlxCamera(]] .. x .. [[, ]] .. y .. [[, ]] .. width .. [[, ]] .. height .. [[, 1);
+		var transparent = ]] .. tostring(transparent) .. [[;
+		]] .. tag .. [[.follow(null);
+		]] .. tag .. [[.bgColor = (transparent ? 0x00 : 0xFF) + 000000;
+		FlxG.cameras.add(]] .. tag .. [[);
+		setVar(']] .. tag .. [[', ]] .. tag .. [[);
+	]])
+end
+function setLuaCamera(obj, cam)
+	runHaxeCode([[
+		var a = game.getLuaObject(']] .. obj .. [[');
+		var b = getVar(']] .. cam .. [[');
+
+		if (a != null || b != null) a.cameras = [b];
+
+		trace('camera: ' + getVar(']] .. cam .. [['));
+		trace('object: ' + a);
+	]])
 end
 function soundLoad(tag, path, loop)
 	loop = loop or false
