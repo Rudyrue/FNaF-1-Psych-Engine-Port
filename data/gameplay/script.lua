@@ -805,7 +805,7 @@ function onPowerChange() setTextString('powerTxt', math.floor(power / 10)) end
 function onPause()
 	soundPause('door')
 	soundPause('camMonitor')
-	soundPause('call1')
+	for i = 1, 5 do soundPause('call' .. i) end
 	if died then soundPause('powerDown')
 	else 
 		soundPause('bgHum')
@@ -820,7 +820,7 @@ end
 function onResume()
 	soundResume('door')
 	soundResume('camMonitor')
-	soundResume('call1')
+	for i = 1, 5 do soundResume('call' .. i) end
 	if died then soundResume('powerDown')
 	else 
 		soundResume('bgHum')

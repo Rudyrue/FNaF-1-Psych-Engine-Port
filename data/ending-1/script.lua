@@ -11,6 +11,8 @@ tweens = {
 
 function onCreatePost()
 	addHaxeLibrary('FlxSound', 'flixel.system')
+	addHaxeLibrary('Application', 'lime.app')
+    addHaxeLibrary('Image','lime.graphics')
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
