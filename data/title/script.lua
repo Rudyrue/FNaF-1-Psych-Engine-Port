@@ -77,8 +77,23 @@ mouseOverlapNight6 = nil
 customNightOptionCooldown = 0
 mouseOverlapCustomNight = nil
 
+easterEgg = false
+
 function onCreatePost()
 	luaDebugMode = true
+
+	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
+	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
+	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
+	setProperty('camGame.visible', false)
+	setProperty('camHUD.visible', false)
+
+	if getRandomInt(1, 1000) - 1 == 1 then
+		easterEgg = true
+		loadSong('creepy-start')
+		return
+	end
+
 	initSaveData('fnaf1')
 	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
 	if getDataFromSave('fnaf1', 'beat6') ~= true then setDataFromSave('fnaf1', 'beat6', false) end
@@ -86,12 +101,6 @@ function onCreatePost()
 	flushSaveData('fnaf1')
 
 	addHaxeLibrary('FlxSound', 'flixel.system')
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
-	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
-	setProperty('camGame.visible', false)
-	setProperty('camHUD.visible', false)
-
 	makeCamera('newGame')
 
 	makeAnimatedLuaSprite('fred', 'fnaf1/title/fred')
@@ -180,9 +189,9 @@ function onCreatePost()
 	setObjectCamera('curSelect', 'other')
 
 	soundLoad('music', 'fnaf1/title/darkness music', true)
-	runHaxeCode("game.modchartSounds.get('music').persist = true")
+	--runHaxeCode("game.modchartSounds.get('music').persist = true")
 	soundLoad('static', 'fnaf1/title/static2')
-	runHaxeCode("game.modchartSounds.get('static').persist = true")
+	--runHaxeCode("game.modchartSounds.get('static').persist = true")
 	soundLoad('select', 'fnaf1/title/blip3')
 	soundPlay('music')
 	soundPlay('static')
@@ -193,6 +202,8 @@ function onCreatePost()
 end
 
 function onUpdate(elapsed)
+	if easterEgg then return end
+
 	if fred.valueA == 99 then setProperty('fred.animation.curAnim.curFrame', 3)
 	elseif fred.valueA == 98 then setProperty('fred.animation.curAnim.curFrame', 2)
 	elseif fred.valueA == 97 then setProperty('fred.animation.curAnim.curFrame', 1)
