@@ -7,6 +7,7 @@ tweens = {
 }
 
 function onCreate()
+	initSaveData('fnaf1')
 	addHaxeLibrary('Application', 'lime.app')
     addHaxeLibrary('Image','lime.graphics')
 	runHaxeCode([[

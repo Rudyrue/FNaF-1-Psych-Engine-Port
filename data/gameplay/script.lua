@@ -152,13 +152,105 @@ timers = {
 	['circusSound'] = function() if getRandomInt(1, 30) == 1 then soundPlay('circus', false, 0.05) end end,
 	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPounding', false, 0.6) end end,
 	['thing'] = function() staticAltValB = math.random(0, 3) end,
-	['muteCall'] = function() 
-		setProperty('muteCall.visible', not getProperty('muteCall.visible'))
+	['muteCall'] = function() setProperty('muteCall.visible', not getProperty('muteCall.visible')) end,
+	['extraPowerDrain'] = function() power = power - 1 end
+}
+
+tweens = {
+	['winCamAlpha1'] = function()
+		setProperty('visuals.visible', false)
+		setProperty('items.visible', false)
+		setProperty('ui.visible', false)
+
+		setProperty('win6.visible', true)
+
+		doTweenY('win5Y', 'win5', 186, 5 / playbackRate, 'linear')
+		soundPlay('chimes')
+
+		if night < 5 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
+		else setDataFromSave('fnaf1', 'night', 5) end
+		flushSaveData('fnaf1')
+	end,
+	['win5Y'] = function() 
+		win.valueA = 1
+		setProperty('win5.visible', false)
+		soundPlay('cheer') 
+	end,
+	['winCamAlpha2'] = function() 
+		if night == 5 then loadSong('ending-1')
+		elseif night == 6 then loadSong('ending-2')
+		elseif night == 7 then loadSong('ending-3')
+		else loadSong('what-day') end
+	end
+}
+
+win = {
+	valueA = 0,
+	valueB = 0
+}
+
+substatesCreate = {
+	['win'] = function()
+		soundStop('door')
+		soundStop('camMonitor')
+		if died then soundStop('powerDown')
+		else 
+			soundStop('bgHum')
+			soundStop('deskFan')
+		end
+	
+		soundStop('circus')
+		soundStop('doorPounding')
+		if cameraActive then soundStop('tapeEject') end
+		if rightLight or leftLight then soundStop('light') end
+		
+		makeLuaSprite('winBg')
+		makeGraphic('winBg', screenWidth, screenHeight, '000000')
+		addLuaSprite('winBg')
+		setLuaCamera('winBg', 'win')
+
+		makeLuaSprite('win5', 'fnaf1/win/5', 549, 298)
+		addLuaSprite('win5')
+		setLuaCamera('win5', 'win')
+
+		makeLuaSprite('win6', 'fnaf1/win/6', 553)
+		addLuaSprite('win6')
+		setLuaCamera('win6', 'win')
+		setProperty('win6.visible', false)
+
+		makeLuaSprite('winAM', 'fnaf1/win/am', 645, 296)
+		addLuaSprite('winAM')
+		setLuaCamera('winAM', 'win')
+
+		makeLuaSprite('winTop', nil, 537, 175)
+		makeGraphic('winTop', 158, 118, '000000')
+		addLuaSprite('winTop')
+		setLuaCamera('winTop', 'win')
+
+		makeLuaSprite('winBottom', nil, 539, 385)
+		makeGraphic('winBottom', 158, 118, '000000')
+		addLuaSprite('winBottom')
+		setLuaCamera('winBottom', 'win')
+
+		doTweenAlpha('winCamAlpha1', 'win', 1, 1 / playbackRate, 'linear')
+	end
+}
+
+substatesUpdate = {
+	['win'] = function()
+		setProperty('win6.y', getProperty('win5.y') + 110)
+
+		if win.valueA == 1 then win.valueB = win.valueB + (1 * playbackRate) end
+
+		if win.valueB > 200 and not luaTweenExists('winCamAlpha2') then
+			doTweenAlpha('winCamAlpha2', 'win', 0, 0.9 / playbackRate, 'linear')
+		end
 	end
 }
 
 function onCreate()
 	luaDebugMode = true
+	initSaveData('fnaf1')
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	addHaxeLibrary('Application', 'lime.app')
     addHaxeLibrary('Image','lime.graphics')
@@ -170,6 +262,8 @@ function onCreate()
         var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
         Application.current.window.setIcon(icon);
     ]])
+
+	night = getDataFromSave('fnaf1', 'night')
 end
 
 function onCreatePost()
@@ -179,6 +273,10 @@ function onCreatePost()
 	makeCamera('visuals')
 	makeCamera('items')
 	makeCamera('ui')
+
+	makeCamera('win')
+	makeCamera('aSeperateCameraJustForThePauseMenuCauseItBrokeWithTheWinCameraLmfao')
+	setProperty('win.alpha', 0)
 
 	makeAnimatedLuaSprite('office', 'fnaf1/gameplay/office') -- office
 	addAnimationByPrefix('office', 'default', 'officeDefault', 0, false)
@@ -339,7 +437,7 @@ function onCreatePost()
 	setProperty('muteCall.alpha', clickteamToFlixelAlpha(100))
 	setProperty('muteCall.visible', false)
 
-	makeLuaText('night', '1', 150, getProperty('nightTxt.x') + 8, getProperty('nightTxt.y') - 7.75)
+	makeLuaText('night', night, 150, getProperty('nightTxt.x') + 8, getProperty('nightTxt.y') - 7.75)
 	addLuaText('night')
 	setTextFont('night', 'fnafFont.ttf')
 	setTextSize('night', 40)
@@ -371,15 +469,23 @@ function onCreatePost()
 	soundLoad('doorPounding', 'fnaf1/gameplay/doorPounding')
 	soundLoad('nose', 'fnaf1/gameplay/nose')
 	soundLoad('powerDown', 'fnaf1/gameplay/powerDown')
+	soundLoad('chimes', 'fnaf1/win/chimes 2')
+	soundLoad('cheer', 'fnaf1/win/CROWD_SMALL_CHIL_EC049202')
 	soundLoad('call1', 'fnaf1/gameplay/voiceover1c')
+	soundLoad('call2', 'fnaf1/gameplay/voiceover2a')
+	soundLoad('call3', 'fnaf1/gameplay/voiceover3')
+	soundLoad('call4', 'fnaf1/gameplay/voiceover4')
+	soundLoad('call5', 'fnaf1/gameplay/voiceover5')
 
 	soundPlay('bgHum', false, 0.3)
 	soundPlay('deskFan', false, 0.4)
-	soundPlay('call1')
+	if getDataFromSave('fnaf1', 'night') <= 5 then soundPlay('call' .. getDataFromSave('fnaf1', 'night')) end
 
 	runTimer('clock', 540 / playbackRate)
 	runTimer('redCircleVisible', 1 / playbackRate, 0)
 	runTimer('powerDrain', 1 / playbackRate, 0)
+
+	if night > 1 then runTimer('extraPowerDrain', ((night == 2 and 6) or (night == 3 and 5) or (night == 4 and 4) or (night >= 5 and 3)) / playbackRate, 0) end
 
 	runTimer('circusSound', 5 / playbackRate, 0)
 	runTimer('doorPoundingSound', 10 / playbackRate, 0)
@@ -542,30 +648,30 @@ function onUpdate(elapsed)
 	if not getProperty('camera.visible') and cameraActive then runHaxeCode('game.callOnLuas("onCameraUpdate", []);') end
 
 	if camFollow.valueA == 0 then
-		camFollow.valueB = camFollow.valueB + 1
-		setProperty('camsFollow.x', getProperty('camsFollow.x') - 1)
+		camFollow.valueB = camFollow.valueB + (1 * playbackRate)
+		setProperty('camsFollow.x', getProperty('camsFollow.x') - (1 * playbackRate))
 
 		if camFollow.valueB >= 320 then
 			camFollow.valueA = 1
 			camFollow.valueB = 0
 		end
 	elseif camFollow.valueA == 1 then
-		camFollow.valueB = camFollow.valueB + 1
+		camFollow.valueB = camFollow.valueB + (1 * playbackRate)
 
 		if camFollow.valueB >= 100 then
 			camFollow.valueA = 2
 			camFollow.valueB = 0
 		end
 	elseif camFollow.valueA == 2 then
-		camFollow.valueB = camFollow.valueB + 1
-		setProperty('camsFollow.x', getProperty('camsFollow.x') + 1)
+		camFollow.valueB = camFollow.valueB + (1 * playbackRate)
+		setProperty('camsFollow.x', getProperty('camsFollow.x') + (1 * playbackRate))
 
 		if camFollow.valueB >= 320 then
 			camFollow.valueA = 3
 			camFollow.valueB = 0
 		end
 	elseif camFollow.valueA == 3 then
-		camFollow.valueB = camFollow.valueB + 1
+		camFollow.valueB = camFollow.valueB + (1 * playbackRate)
 
 		if camFollow.valueB >= 100 then
 			camFollow.valueA = 0
@@ -583,7 +689,7 @@ function onUpdate(elapsed)
 
 	-- time system
 	curTime = round(curTimerLength('clock'))
-	if ((lastTimeCheck + 90) <= curTime) and changeTime then
+	if (((lastTimeCheck / playbackRate) + (90 / playbackRate)) <= (curTime / playbackRate)) and changeTime then
 		lastTimeCheck = curTime
 		curTimeCheck = curTimeCheck + 1
 		runHaxeCode('game.callOnLuas("onTimeChange", [' .. curTimeCheck .. ']);')
@@ -726,7 +832,10 @@ function onResume()
 	if cameraActive then soundResume('tapeEject') end
 	if rightLight or leftLight then soundResume('light') end
 end
-function onTimeChange(time) setTextString('timeNum', time) end
+function onTimeChange(time) 
+	setTextString('timeNum', time) 
+	if time == 6 then openCustomSubstate('win', true) end
+end
 function onDestroy() 
 	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine") 
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', false)
@@ -737,8 +846,12 @@ function onDestroy()
     ]])
 end
 function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
+function luaTweenExists(tag) return runHaxeCode("return game.modchartTweens.exists('" .. tag .. "')") end
 function round(num, decimal_places) return math.floor(num * (10 ^ (decimal_places or 0)) + 0.5) / (10 ^ (decimal_places or 0)) end
+function onCustomSubstateCreate(t) if substatesCreate[t] then substatesCreate[t]() end end
+function onCustomSubstateUpdate(t) if substatesUpdate[t] then substatesUpdate[t]() end end
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
+function onTweenCompleted(t) if tweens[t] then tweens[t]() end end
 function curTimerLength(timer) 
 	return runHaxeCode([[
 		var tmr = game.modchartTimers.get(']] .. timer .. [[');

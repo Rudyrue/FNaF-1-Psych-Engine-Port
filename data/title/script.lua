@@ -18,11 +18,16 @@ timers = {
 		fred.valueA = getRandomInt(1, 100) - 1
 		setProperty('blip.alpha', clickteamToFlixelAlpha((getRandomInt(1, 100) - 1) + 100))
 	end,
-	['ad'] = function() doTweenAlpha('adAlpha2', 'ad', 0, 2, 'linear') end
+	['ad'] = function() doTweenAlpha('adAlpha2', 'ad', 0, 2 / playbackRate, 'linear') end
 }
 
 tweens = {
-	['adAlpha1'] = function() setProperty('camOther.visible', false) end,
+	['adAlpha1'] = function() 
+		setProperty('camOther.visible', false)
+
+		setDataFromSave('fnaf1', 'night', 1)
+		flushSaveData('fnaf1')
+	end,
 	['adAlpha2'] = function() 
 		loadSong('what-day')
 		soundStop('music')
@@ -43,7 +48,7 @@ substatesCreate = {
 		addLuaSprite('ad')
 		setLuaCamera('ad', 'newGame')
 		setProperty('ad.alpha', 0)
-		doTweenAlpha('adAlpha1', 'ad', 1, 2, 'linear')
+		doTweenAlpha('adAlpha1', 'ad', 1, 2 / playbackRate, 'linear')
 
 		runTimer('ad', 5 / playbackRate)
 	end
@@ -66,6 +71,7 @@ mouseOverlapContinue = nil
 
 function onCreatePost()
 	luaDebugMode = true
+	initSaveData('fnaf1')
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
@@ -115,7 +121,7 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', '1', 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
+	makeLuaText('night', getDataFromSave('fnaf1', 'night'), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
 	setTextFont('night', 'fnafFont.ttf')
 	setTextSize('night', 35)
 	setTextBorder('night', 0, '0x0')
