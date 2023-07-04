@@ -12,6 +12,13 @@ function onCreatePost()
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
+	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
+	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
+	runHaxeCode([[
+        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
+        Application.current.window.setIcon(icon);
+    ]])
+	
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
 

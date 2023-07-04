@@ -15,6 +15,12 @@ function onCreatePost()
 	setProperty('camHUD.visible', false)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
+	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
+	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
+	runHaxeCode([[
+        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
+        Application.current.window.setIcon(icon);
+    ]])
 
 	makeLuaSprite('img', 'fnaf1/ending 1/ending')
 	addLuaSprite('img')
