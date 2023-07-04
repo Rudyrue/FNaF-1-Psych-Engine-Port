@@ -3,7 +3,7 @@ timers = {
 }
 
 tweens = {
-	['disclaimerAlpha'] = function() loadSong('title') end
+	['disclaimerAlpha'] = function() loadSong((getRandomInt(1, 1000) - 1) == 1 and 'creepy-start' or 'title') end
 }
 
 function onCreate()

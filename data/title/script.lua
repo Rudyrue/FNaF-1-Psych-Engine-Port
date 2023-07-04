@@ -77,8 +77,6 @@ mouseOverlapNight6 = nil
 customNightOptionCooldown = 0
 mouseOverlapCustomNight = nil
 
-easterEgg = false
-
 function onCreatePost()
 	luaDebugMode = true
 
@@ -87,12 +85,6 @@ function onCreatePost()
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
-
-	if getRandomInt(1, 1000) - 1 == 1 then
-		easterEgg = true
-		loadSong('creepy-start')
-		return
-	end
 
 	initSaveData('fnaf1')
 	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
@@ -202,8 +194,6 @@ function onCreatePost()
 end
 
 function onUpdate(elapsed)
-	if easterEgg then return end
-
 	if fred.valueA == 99 then setProperty('fred.animation.curAnim.curFrame', 3)
 	elseif fred.valueA == 98 then setProperty('fred.animation.curAnim.curFrame', 2)
 	elseif fred.valueA == 97 then setProperty('fred.animation.curAnim.curFrame', 1)
