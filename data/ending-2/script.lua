@@ -10,6 +10,7 @@ tweens = {
 }
 
 function onCreatePost()
+	initSaveData('fnaf1')
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	addHaxeLibrary('Application', 'lime.app')
     addHaxeLibrary('Image','lime.graphics')
@@ -32,6 +33,9 @@ function onCreatePost()
 
 	soundLoad('music', 'fnaf1/ending/music box')
 	soundPlay('music')
+
+	setDataFromSave('fnaf1', 'beat6', true)
+	flushSaveData('fnaf1')
 
 	runTimer('exit', 15 / playbackRate)
 end

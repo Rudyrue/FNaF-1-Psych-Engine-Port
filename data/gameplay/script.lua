@@ -239,12 +239,8 @@ substatesCreate = {
 substatesUpdate = {
 	['win'] = function()
 		setProperty('win6.y', getProperty('win5.y') + 110)
-
 		if win.valueA == 1 then win.valueB = win.valueB + (1 * playbackRate) end
-
-		if win.valueB > 200 and not luaTweenExists('winCamAlpha2') then
-			doTweenAlpha('winCamAlpha2', 'win', 0, 0.9 / playbackRate, 'linear')
-		end
+		if win.valueB > 200 and not luaTweenExists('winCamAlpha2') then doTweenAlpha('winCamAlpha2', 'win', 0, 0.9 / playbackRate, 'linear') end
 	end
 }
 

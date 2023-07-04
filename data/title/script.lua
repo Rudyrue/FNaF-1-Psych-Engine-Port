@@ -39,7 +39,9 @@ curSelected = 0
 
 curSelectPositions = {
 	[1] = {104, 407}, -- new game
-	[2] = {104, 479} -- continue
+	[2] = {104, 479}, -- continue
+	[3] = {99, 558},
+	[4] = {111, 626}
 }
 
 substatesCreate = {
@@ -69,9 +71,20 @@ mouseOverlapNewGame = nil
 continueOptionCooldown = 0
 mouseOverlapContinue = nil
 
+night6OptionCooldown = 0
+mouseOverlapNight6 = nil
+
+customNightOptionCooldown = 0
+mouseOverlapCustomNight = nil
+
 function onCreatePost()
 	luaDebugMode = true
 	initSaveData('fnaf1')
+	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
+	if getDataFromSave('fnaf1', 'beat6') ~= true then setDataFromSave('fnaf1', 'beat6', false) end
+	if getDataFromSave('fnaf1', 'night') > 5 then setDataFromSave('fnaf1', 'night', 5) end
+	flushSaveData('fnaf1')
+
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
@@ -115,6 +128,31 @@ function onCreatePost()
 	makeLuaSprite('continue', 'fnaf1/title/continue', 173, 475)
 	addLuaSprite('continue')
 	setObjectCamera('continue', 'other')
+
+	makeLuaSprite('night6', 'fnaf1/title/6th night', 172, 549)
+	addLuaSprite('night6')
+	setObjectCamera('night6', 'other')
+	setProperty('night6.visible', getDataFromSave('fnaf1', 'beatGame'))
+
+	makeLuaSprite('customNight', 'fnaf1/title/custom night', 171, 617)
+	addLuaSprite('customNight')
+	setObjectCamera('customNight', 'other')
+	setProperty('customNight.visible', getDataFromSave('fnaf1', 'beat6'))
+
+	makeLuaSprite('star1', 'fnaf1/title/star', 172, 311)
+	addLuaSprite('star1')
+	setObjectCamera('star1', 'other')
+	setProperty('star1.visible', getDataFromSave('fnaf1', 'beatGame'))
+
+	makeLuaSprite('star2', 'fnaf1/title/star', 249, 311)
+	addLuaSprite('star2')
+	setObjectCamera('star2', 'other')
+	setProperty('star2.visible', getDataFromSave('fnaf1', 'beat6'))
+
+	makeLuaSprite('star3', 'fnaf1/title/star', 324, 311)
+	addLuaSprite('star3')
+	setObjectCamera('star3', 'other')
+	setProperty('star3.visible', getDataFromSave('fnaf1', 'beat7'))
 
 	makeLuaSprite('nightTxt', 'fnaf1/title/night', getProperty('continue.x') + 2, getProperty('continue.y') + 42)
 	addLuaSprite('nightTxt')
@@ -184,16 +222,39 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	if keyboardJustPressed('ENTER') or ((mouseOverlap('newGame', 'other') or mouseOverlap('continue', 'other')) and mouseClicked()) then
+	mouseOverlapNight6 = mouseOverlap('night6', 'other') and getDataFromSave('fnaf1', 'beatGame')
+	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) end
+	if mouseOverlapNight6 and night6OptionCooldown <= 0 and curSelected ~= 2 then 
+		night6OptionCooldown = 0.1
+		curSelected = 2
+		changeSelection()
+	end
+
+	mouseOverlapCustomNight = mouseOverlap('customNight', 'other') and getDataFromSave('fnaf1', 'beat6')
+	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
+	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
+		customNightOptionCooldown = 0.1
+		curSelected = 3
+		changeSelection()
+	end
+
+	if keyboardJustPressed('ENTER') or ((mouseOverlap('newGame', 'other') or mouseOverlap('continue', 'other') or mouseOverlap('night6', 'other') or mouseOverlap('customNight', 'other')) and mouseClicked()) then
 		switch(curSelected, {
-			[0] = function()
-				openCustomSubstate('newGame', true)
-			end,
+			[0] = function() openCustomSubstate('newGame', true) end,
 			[1] = function()
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
-			end
+			end,
+			[2] = function()
+				setDataFromSave('fnaf1', 'night', 6)
+				flushSaveData('fnaf1')
+
+				loadSong('what-day')
+				soundStop('music')
+				soundStop('static')
+			end--[[,
+			[3] = function() loadSong('custom-night') end]]
 		})
 	end
 end
@@ -201,8 +262,8 @@ end
 function changeSelection(a)
 	a = a or 0
 	curSelected = curSelected + a
-	if curSelected < 0 then curSelected = 1
-	elseif curSelected > 1 then curSelected = 0 end
+	if curSelected < 0 then curSelected = 3
+	elseif curSelected > 3 then curSelected = 0 end
 
 	setProperty('curSelect.x', curSelectPositions[curSelected + 1][1])
 	setProperty('curSelect.y', curSelectPositions[curSelected + 1][2])
