@@ -9,31 +9,69 @@ cameraActive = false
 	2 = dining area
 	3 = west hall
 	4 = east hall
-	5 = storage room
+	5 = backstage
 	6 = kitchen
 	7 = restrooms
 	8 = west hall corner (originally 22)
-	9 = janitor's closet (originally 33)
+	9 = supply closet (originally 33)
 	10 = east hall corner (originally 42)
 	11 = pirate's cove (originally 99)
 ]]
 
 lastCam = 1 -- last camera you were on
-curCam = 1-- current camera you are on
+curCam = 1 -- current camera you are on
 cameraButtons = { -- camera button positions need i say less
-	-- [cam] = {x, y}
+	--[[ 
+		[cam] = {
+			['button'] = {x, y},
+			['buttonTextOffset'] = {x, y}
+		}
+	]]
 	
-	[1] = {955, 335},
-	[2] = {940, 391},
-	[3] = {955, 585},
-	[4] = {1060, 585},
-	[5] = {832, 420},
-	[6] = {1160, 550},
-	[7] = {1167, 418},
-	[8] = {955, 625},
-	[9] = {875, 566},
-	[10] = {1060, 620},
-	[11] = {901, 471}
+	[1] = {
+		['but'] = {954, 334},
+		['txtOffset'] = {8, 7}
+	},
+	[2] = {
+		['but'] = {934, 390},
+		['txtOffset'] = {6, 7}
+	},
+	[3] = {
+		['but'] = {954, 584},
+		['txtOffset'] = {7, 6}
+	},
+	[4] = {
+		['but'] = {1060, 585},
+		['txtOffset'] = {7, 7}
+	},
+	[5] = {
+		['but'] = {828, 417},
+		['txtOffset'] = {7, 7}
+	},
+	[6] = {
+		['but'] = {1157, 549},
+		['txtOffset'] = {7, 7}
+	},
+	[7] = {
+		['but'] = {1166, 418},
+		['txtOffset'] = {7, 6}
+	},
+	[8] = {
+		['but'] = {954, 624},
+		['txtOffset'] = {7, 6}
+	},
+	[9] = {
+		['but'] = {870, 566},
+		['txtOffset'] = {8, 8}
+	},
+	[10] = {
+		['but'] = {1060, 625},
+		['txtOffset'] = {7, 7}
+	},
+	[11] = {
+		['but'] = {902, 468},
+		['txtOffset'] = {7, 7}
+	}
 }
 
 cameras = { -- camera sprites
@@ -95,6 +133,11 @@ rightLightUsage = 0
 died = false
 staticAltValB = nil
 
+camFollow = {
+	valueA = 0,
+	valueB = 0
+}
+
 -- extra script shit --
 timers = {
 	['clock'] = function() restartSong() end, -- when the clock hits 6 it restarts the song
@@ -108,14 +151,28 @@ timers = {
 	end,
 	['circusSound'] = function() if getRandomInt(1, 30) == 1 then soundPlay('circus', false, 0.05) end end,
 	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPounding', false, 0.6) end end,
-	['thing'] = function() staticAltValB = math.random(0, 3) end
+	['thing'] = function() staticAltValB = math.random(0, 3) end,
+	['muteCall'] = function() 
+		setProperty('muteCall.visible', not getProperty('muteCall.visible'))
+	end
 }
 
-function onCreatePost()
+function onCreate()
 	luaDebugMode = true
 	addHaxeLibrary('FlxSound', 'flixel.system')
+	addHaxeLibrary('Application', 'lime.app')
+    addHaxeLibrary('Image','lime.graphics')
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
+	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
+	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
+	runHaxeCode([[
+        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
+        Application.current.window.setIcon(icon);
+    ]])
+end
+
+function onCreatePost()
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
 
@@ -183,11 +240,15 @@ function onCreatePost()
 	makeLuaSprite('scroll', nil, 640, 359) -- the scroll thing that makes you go left and right
 	setLuaCamera('scroll', 'visuals')
 
+	makeLuaSprite('camsFollow')
+	setLuaCamera('camsFollow', 'visuals')
+
 	runHaxeCode('getVar("visuals").follow(game.getLuaObject("scroll", false));')
 
 	if shadersEnabled then
 		makeLuaSprite('temporaryShader')
 		setSpriteShader('temporaryShader', 'shader')
+		setShaderFloat('temporaryShader', 'depth', 5)
 		addHaxeLibrary('ShaderFilter', 'openfl.filters')
 		runHaxeCode([[
 			getVar('visuals').setFilters([new ShaderFilter(game.getLuaObject('temporaryShader').shader)]);
@@ -213,23 +274,25 @@ function onCreatePost()
 	addAnimationByPrefix('static', 'a', 'static', 60)
 	setGraphicSize('static', screenWidth, screenHeight)
 
-	makeLuaSprite('camBorder', 'fnaf1/gameplay/camBorder', 0, 0) -- the border on the cameras
-	setGraphicSize('camBorder', screenWidth, screenHeight)
+	makeLuaSprite('camBorder', 'fnaf1/gameplay/camBorder', 0, -1) -- the border on the cameras
 
-	makeLuaSprite('map', 'fnaf1/gameplay/map', 850, 315) -- the map on the cameras
+	makeLuaSprite('map', 'fnaf1/gameplay/map', 848, 313) -- the map on the cameras
 	
 	for i = 1, #cameraButtons do -- all of the camera buttons
-		makeLuaSprite('cam' .. i .. 'ButtonSpr', 'fnaf1/gameplay/camButton', cameraButtons[i][1], cameraButtons[i][2])
-		makeLuaSprite('cam' .. i .. 'ButtonTxt', 'fnaf1/gameplay/cameras/cam' .. i, getProperty('cam' .. i .. 'ButtonSpr.x') + 5, getProperty('cam' .. i .. 'ButtonSpr.y') + 7)
+		makeAnimatedLuaSprite('cam' .. i .. 'ButtonSpr', 'fnaf1/gameplay/camButton', cameraButtons[i]['but'][1], cameraButtons[i]['but'][2])
+		addAnimationByIndices('cam' .. i .. 'ButtonSpr', 'default', 'button', '1', 0)
+		addAnimationByPrefix('cam' .. i .. 'ButtonSpr', 'selected', 'button', 0)
+
+		makeLuaSprite('cam' .. i .. 'ButtonTxt', 'fnaf1/gameplay/cameras/cam' .. i, getProperty('cam' .. i .. 'ButtonSpr.x') + cameraButtons[i]['txtOffset'][1], getProperty('cam' .. i .. 'ButtonSpr.y') + cameraButtons[i]['txtOffset'][2])
 	end
 
-	makeLuaSprite('curCamTxt', nil, 830, 280) -- the current camera in text
+	makeLuaSprite('curCamTxt', nil, 832, 292) -- the current camera in text
 
 	makeAnimatedLuaSprite('camChangeAnim', 'fnaf1/gameplay/camChange') -- the white static animation thing that plays when you change cameras
 	addAnimationByPrefix('camChangeAnim', 'a', 'camChange', 42, false)
 	setGraphicSize('camChangeAnim', screenWidth, screenHeight)
 
-	makeLuaSprite('cameraButton', 'fnaf1/gameplay/cameraButton', 290, 640) -- the camera monitor's button
+	makeLuaSprite('cameraButton', 'fnaf1/gameplay/cameraButton', 255, 638) -- the camera monitor's button
 	addLuaSprite('cameraButton', true)
 	setLuaCamera('cameraButton', 'ui')
 
@@ -237,41 +300,44 @@ function onCreatePost()
 	makeGraphic('cameraHitbox', getProperty('cameraButton.width'), screenHeight - getProperty('cameraButton.height'), '000000')
 	setLuaCamera('cameraHitbox', 'ui')
 
-	makeLuaSprite('powerLeftTxt', 'fnaf1/gameplay/powerLeftTxt', 40, screenHeight - 90)
+	makeLuaSprite('powerLeftTxt', 'fnaf1/gameplay/powerLeftTxt', 38, 631)
 	addLuaSprite('powerLeftTxt', true)
-	scaleObject('powerLeftTxt', 1.1, 1.1)
 	setLuaCamera('powerLeftTxt', 'ui')
 
-	makeLuaText('powerTxt', math.floor(power / 10), 100, getProperty('powerLeftTxt.x') + 108, getProperty('powerLeftTxt.y') - 14)
+	makeLuaText('powerTxt', math.floor(power / 10), 100, getProperty('powerLeftTxt.x') + 83, getProperty('powerLeftTxt.y') - 14)
 	setTextAlignment('powerTxt', 'right')
 	setTextFont('powerTxt', 'fnafFont.ttf')
-	setTextSize('powerTxt', 56)
+	setTextSize('powerTxt', 55)
 	setTextBorder('powerTxt', 0, '0x0')
 	addLuaText('powerTxt', true)
 	setLuaCamera('powerTxt', 'ui')
 
-	makeLuaSprite('percentage', 'fnaf1/gameplay/percentage', getProperty('powerTxt.x') + 105, getProperty('powerTxt.y') + 15)
-	scaleObject('percentage', 1.1, 1.1)
+	makeLuaSprite('percentage', 'fnaf1/gameplay/percentage', 224, getProperty('powerTxt.y') + 15)
 	addLuaSprite('percentage', true)
 	setLuaCamera('percentage', 'ui')
 
-	makeLuaSprite('usageTxt', 'fnaf1/gameplay/usageTxt', 40, getProperty('powerLeftTxt.y') + 38)
+	makeLuaSprite('usageTxt', 'fnaf1/gameplay/usageTxt', 38, getProperty('powerLeftTxt.y') + 36)
 	addLuaSprite('usageTxt', true)
-	scaleObject('usageTxt', 1.1, 1.1)
 	setLuaCamera('usageTxt', 'ui')
 
-	makeAnimatedLuaSprite('usageMeter', 'fnaf1/gameplay/usageMeter', getProperty('usageTxt.x') + (getProperty('usageTxt.width') + 15), getProperty('usageTxt.y') - 8)
+	makeAnimatedLuaSprite('usageMeter', 'fnaf1/gameplay/usageMeter', getProperty('usageTxt.x') + (getProperty('usageTxt.width') + 10), getProperty('usageTxt.y') - 10)
 	addAnimationByPrefix('usageMeter', 'a', 'usage', 0, false)
 	addLuaSprite('usageMeter', true)
 	setLuaCamera('usageMeter', 'ui')
 
-	makeLuaSprite('amTxt', 'fnaf1/gameplay/amTxt', screenWidth - 80, 35)
+	makeLuaSprite('amTxt', 'fnaf1/gameplay/amTxt', 1200, 31)
 	addLuaSprite('amTxt', true)
 	setLuaCamera('amTxt', 'ui')
 
-	makeLuaSprite('nightTxt', 'fnaf1/gameplay/nightTxt', screenWidth - 130, 70)
+	makeLuaSprite('nightTxt', 'fnaf1/gameplay/nightTxt', 1148, 74)
 	addLuaSprite('nightTxt', true)
 	setLuaCamera('nightTxt', 'ui')
+
+	makeLuaSprite('muteCall', 'fnaf1/gameplay/muteCall', 27, 22)
+	addLuaSprite('muteCall', true)
+	setLuaCamera('muteCall', 'ui')
+	setProperty('muteCall.alpha', clickteamToFlixelAlpha(100))
+	setProperty('muteCall.visible', false)
 
 	makeLuaText('night', '1', 150, getProperty('nightTxt.x') + 8, getProperty('nightTxt.y') - 7.75)
 	addLuaText('night')
@@ -292,7 +358,7 @@ function onCreatePost()
 	makeLuaSprite('audioOnly', 'fnaf1/gameplay/audioOnly', 0, 50)
 	screenCenter('audioOnly', 'x')
 
-	makeLuaSprite('redCircle', 'fnaf1/gameplay/redCircle', 70, 51) -- the red circle thingie on cams again
+	makeLuaSprite('redCircle', 'fnaf1/gameplay/redCircle', 68, 52) -- the red circle thingie on cams again
 
 	soundLoad('camMonitor', 'fnaf1/gameplay/camMonitor')
 	soundLoad('deskFan', 'fnaf1/gameplay/deskFan', true)
@@ -305,9 +371,11 @@ function onCreatePost()
 	soundLoad('doorPounding', 'fnaf1/gameplay/doorPounding')
 	soundLoad('nose', 'fnaf1/gameplay/nose')
 	soundLoad('powerDown', 'fnaf1/gameplay/powerDown')
+	soundLoad('call1', 'fnaf1/gameplay/voiceover1c')
 
 	soundPlay('bgHum', false, 0.3)
 	soundPlay('deskFan', false, 0.4)
+	soundPlay('call1')
 
 	runTimer('clock', 540 / playbackRate)
 	runTimer('redCircleVisible', 1 / playbackRate, 0)
@@ -316,6 +384,7 @@ function onCreatePost()
 	runTimer('circusSound', 5 / playbackRate, 0)
 	runTimer('doorPoundingSound', 10 / playbackRate, 0)
 	runTimer('thing', 1 / playbackRate, 0)
+	runTimer('muteCall', 20 / playbackRate, 2)
 end
 
 function onCameraOpen()
@@ -335,7 +404,6 @@ function onCameraOpen()
 
 	addLuaSprite('curCamSpr')
 	setLuaCamera('curCamSpr', 'items')
-	setProperty('curCamSpr.x', (curCam == 9) and 0 or getProperty('moveCamPos'))
 
 	addLuaSprite('static')
 	setLuaCamera('static', 'ui')
@@ -377,14 +445,18 @@ function onCameraUpdate()
 	end
 
 	setProperty('static.alpha', clickteamToFlixelAlpha(150 + math.random(0, 50) + (staticAltValB * 15)))
-	setProperty('curCamSpr.x', (curCam == 9 or curCam == 6) and 0 or getProperty('moveCamPos'))
 end
 
 -- when you change cameras
 function onCameraChange(cam)
 	soundPlay('camChange')
-	loadGraphic('cam' .. lastCam .. 'ButtonSpr', 'fnaf1/gameplay/camButton')
-	loadGraphic('cam' .. cam .. 'ButtonSpr', 'fnaf1/gameplay/camButtonSelect')
+	if lastCam ~= curCam then playAnim('cam' .. lastCam .. 'ButtonSpr', 'default', true) end
+	if getProperty('cam' .. cam .. 'ButtonSpr.animation.curAnim.name') ~= 'selected' then
+		playAnim('cam' .. cam .. 'ButtonSpr', 'selected')
+		setProperty('cam' .. cam .. 'ButtonSpr.animation.curAnim.frameRate', 1.8)
+		playAnim('cam' .. cam .. 'ButtonSpr', 'selected', true)
+	end
+
 	playAnim('curCamSpr', 'cam' .. cam .. cameras[cam][1], true)
 	loadGraphic('curCamTxt', 'fnaf1/gameplay/cameras/cam' .. cam .. 'Txt')
 
@@ -469,33 +541,44 @@ function onUpdate(elapsed)
 	end
 	if not getProperty('camera.visible') and cameraActive then runHaxeCode('game.callOnLuas("onCameraUpdate", []);') end
 
-	if not getProperty('startMoveCam') and not died then
-		runHaxeCode([[
-			var tweenValue;
-			var wait;
-			var loopBack:Bool = true;
+	if camFollow.valueA == 0 then
+		camFollow.valueB = camFollow.valueB + 1
+		setProperty('camsFollow.x', getProperty('camsFollow.x') - 1)
 
-			tweenValue = function(a:Bool) {
-				FlxTween.num((a ? 0 : -320), (a ? -320 : 0), 5 / game.playbackRate, 
-				{ease: FlxEase.linear, onUpdate: function(b) {
-					setVar('moveCamPos', b.value);
-					game.modchartTweens.set('tweenMoveCam', b);
-				}, onComplete: function() {
-					wait();
-				}});
-			}
+		if camFollow.valueB >= 320 then
+			camFollow.valueA = 1
+			camFollow.valueB = 0
+		end
+	elseif camFollow.valueA == 1 then
+		camFollow.valueB = camFollow.valueB + 1
 
-			wait = function() {
-				var g = new FlxTimer().start(3 / game.playbackRate, function(tmr:FlxTimer) {
-					tweenValue(!loopBack);
-					loopBack = !loopBack;
-				});
-				game.modchartTimers.set('waitMoveCam', g);
-			}
+		if camFollow.valueB >= 100 then
+			camFollow.valueA = 2
+			camFollow.valueB = 0
+		end
+	elseif camFollow.valueA == 2 then
+		camFollow.valueB = camFollow.valueB + 1
+		setProperty('camsFollow.x', getProperty('camsFollow.x') + 1)
 
-			tweenValue(true);
-			setVar('startMoveCam', true);
-		]])
+		if camFollow.valueB >= 320 then
+			camFollow.valueA = 3
+			camFollow.valueB = 0
+		end
+	elseif camFollow.valueA == 3 then
+		camFollow.valueB = camFollow.valueB + 1
+
+		if camFollow.valueB >= 100 then
+			camFollow.valueA = 0
+			camFollow.valueB = 0
+		end
+	end
+
+	setProperty('curCamSpr.x', (curCam == 9 or curCam == 6) and 0 or getProperty('camsFollow.x'))
+
+	if mouseOverlap('muteCall', 'other') and mouseClicked() and getProperty('muteCall.visible') then
+		soundStop('call1')
+		setProperty('muteCall.visible', false)
+		cancelTimer('muteCall')
 	end
 
 	-- time system
@@ -616,6 +699,7 @@ function onPowerChange() setTextString('powerTxt', math.floor(power / 10)) end
 function onPause()
 	soundPause('door')
 	soundPause('camMonitor')
+	soundPause('call1')
 	if died then soundPause('powerDown')
 	else 
 		soundPause('bgHum')
@@ -630,6 +714,7 @@ end
 function onResume()
 	soundResume('door')
 	soundResume('camMonitor')
+	soundResume('call1')
 	if died then soundResume('powerDown')
 	else 
 		soundResume('bgHum')
@@ -645,6 +730,11 @@ function onTimeChange(time) setTextString('timeNum', time) end
 function onDestroy() 
 	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine") 
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', false)
+
+	runHaxeCode([[
+        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon16.png'));
+        Application.current.window.setIcon(icon);
+    ]])
 end
 function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
 function round(num, decimal_places) return math.floor(num * (10 ^ (decimal_places or 0)) + 0.5) / (10 ^ (decimal_places or 0)) end

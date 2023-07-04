@@ -38,7 +38,6 @@ function onCreatePost()
 	addHaxeLibrary('FlxSound', 'flixel.system')
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
-	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
@@ -104,7 +103,9 @@ function onCreatePost()
 	setObjectCamera('curSelect', 'other')
 
 	soundLoad('music', 'fnaf1/title/darkness music', true)
+	runHaxeCode("game.modchartSounds.get('music').persist = true")
 	soundLoad('static', 'fnaf1/title/static2')
+	runHaxeCode("game.modchartSounds.get('static').persist = true")
 	soundLoad('select', 'fnaf1/title/blip3')
 	soundPlay('music')
 	soundPlay('static')
@@ -148,6 +149,8 @@ function onUpdate(elapsed)
 		switch(curSelected, {
 			[1] = function()
 				loadSong('what-day')
+				soundStop('music')
+				soundStop('static')
 			end
 		})
 	end
@@ -198,7 +201,13 @@ function soundPlay(tag, forceRestart, volume)
 		if (game.modchartSounds.exists(']] .. tag .. [[')) {
 			a.volume = ]] .. volume .. [[;
 			a.play(]] .. tostring(forceRestart) .. [[);
-		}
-		else game.addTextToDebug('soundPlay: Sound tag "]] .. tag .. [[" was not found.', 0xFFFF0000);
+		} else game.addTextToDebug('soundPlay: Sound tag "]] .. tag .. [[" was not found.', 0xFFFF0000);
+	]])
+end
+function soundStop(tag)
+	runHaxeCode([[
+		var a = game.modchartSounds.get(']] .. tag .. [[');
+		if (game.modchartSounds.exists(']] .. tag .. [[')) a.stop();
+		else game.addTextToDebug('soundStop: Sound tag "]] .. tag .. [[" was not found.', 0xFFFF0000);
 	]])
 end

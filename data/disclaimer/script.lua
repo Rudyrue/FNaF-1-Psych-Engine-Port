@@ -6,9 +6,19 @@ tweens = {
 	['disclaimerAlpha'] = function() loadSong('title') end
 }
 
+function onCreate()
+	addHaxeLibrary('Application', 'lime.app')
+    addHaxeLibrary('Image','lime.graphics')
+	runHaxeCode([[
+        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
+        Application.current.window.setIcon(icon);
+    ]])
+end
+
 function onCreatePost()
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
+	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
 
