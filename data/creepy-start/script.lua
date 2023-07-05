@@ -4,12 +4,6 @@ timers = {
 }
 
 function onCreate()
-	setProperty('camGame.visible', false)
-	setProperty('camHUD.visible', false)
-
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
-
 	makeLuaSprite('bonnie', 'fnaf1/creepy start/bonnie')
 	addLuaSprite('bonnie')
 	setObjectCamera('bonnie', 'other')
@@ -29,4 +23,3 @@ function onCreate()
 end
 
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
-function onPause() return Function_Stop end

@@ -26,7 +26,6 @@ tweens = {
 		setProperty('camOther.visible', false)
 
 		setDataFromSave('fnaf1', 'night', 1)
-		setDataFromSave('fnaf1', 'realNight', 1)
 		flushSaveData('fnaf1')
 	end,
 	['adAlpha2'] = function() 
@@ -79,22 +78,10 @@ customNightOptionCooldown = 0
 mouseOverlapCustomNight = nil
 
 function onCreatePost()
-	luaDebugMode = true
-
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
-	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
-	setProperty('camGame.visible', false)
-	setProperty('camHUD.visible', false)
-
-	initSaveData('fnaf1')
 	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
 	if getDataFromSave('fnaf1', 'beat6') ~= true then setDataFromSave('fnaf1', 'beat6', false) end
 	if getDataFromSave('fnaf1', 'night') > 5 then setDataFromSave('fnaf1', 'night', 5) end
-	if getDataFromSave('fnaf1', 'realNight') == nil then setDataFromSave('fnaf1', 'realNight', 1) end
 	flushSaveData('fnaf1')
-
-	addHaxeLibrary('FlxSound', 'flixel.system')
 	makeCamera('newGame')
 
 	makeAnimatedLuaSprite('fred', 'fnaf1/title/fred')
@@ -162,7 +149,7 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', getDataFromSave('fnaf1', 'realNight'), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
+	makeLuaText('night', getDataFromSave('fnaf1', 'night'), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
 	setTextFont('night', 'fnafFont.ttf')
 	setTextSize('night', 35)
 	setTextBorder('night', 0, '0x0')
@@ -277,7 +264,6 @@ function changeSelection(a)
 	soundPlay('select', true)
 end
 
-function onPause() return Function_Stop end
 function onCustomSubstateCreate(t) if substatesCreate[t] then substatesCreate[t]() end end
 function onCustomSubstateUpdate(t) if substatesUpdate[t] then substatesUpdate[t]() end end
 function luaTweenExists(tag) return runHaxeCode("return game.modchartTweens.exists('" .. tag .. "')") end

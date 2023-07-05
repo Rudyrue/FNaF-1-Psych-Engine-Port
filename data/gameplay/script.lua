@@ -131,7 +131,10 @@ leftLightUsage = 0
 rightLightUsage = 0
 
 died = false
-staticAltValB = nil
+
+static = {
+	valueB = 0
+}
 
 camFollow = {
 	valueA = 0,
@@ -151,7 +154,7 @@ timers = {
 	end,
 	['circusSound'] = function() if getRandomInt(1, 30) == 1 then soundPlay('circus', false, 0.05) end end,
 	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPounding', false, 0.6) end end,
-	['thing'] = function() staticAltValB = math.random(0, 3) end,
+	['thing'] = function() static.valueB = getRandomInt(1, 3) - 1 end,
 	['muteCall'] = function() setProperty('muteCall.visible', not getProperty('muteCall.visible')) end,
 	['extraPowerDrain'] = function() power = power - 1 end
 }
@@ -167,9 +170,7 @@ tweens = {
 		doTweenY('win5Y', 'win5', 186, 5 / playbackRate, 'linear')
 		soundPlay('chimes')
 
-		if night < 5 then 
-			setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
-			setDataFromSave('fnaf1', 'realNight', getDataFromSave('fnaf1', 'realNight') + 1)
+		if night < 5 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
 		else setDataFromSave('fnaf1', 'night', 5) end
 		flushSaveData('fnaf1')
 	end,
@@ -246,27 +247,8 @@ substatesUpdate = {
 	end
 }
 
-function onCreate()
-	luaDebugMode = true
-	initSaveData('fnaf1')
-	addHaxeLibrary('FlxSound', 'flixel.system')
-	addHaxeLibrary('Application', 'lime.app')
-    addHaxeLibrary('Image','lime.graphics')
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
-	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
-	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
-	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
-	runHaxeCode([[
-        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
-        Application.current.window.setIcon(icon);
-    ]])
-
-	night =  getDataFromSave('fnaf1', getDataFromSave('fnaf1', 'realNight') < 5 and 'realNight' or 'night')
-end
-
 function onCreatePost()
-	setProperty('camGame.visible', false)
-	setProperty('camHUD.visible', false)
+	night = getDataFromSave('fnaf1', 'night')
 
 	makeCamera('visuals')
 	makeCamera('items')
@@ -355,7 +337,6 @@ function onCreatePost()
 	makeAnimatedLuaSprite('camera', 'fnaf1/gameplay/camMonitor', 0, 0) -- camera monitor
 	addAnimationByPrefix('camera', 'a', 'monitor', 30, false)
 	addAnimationByIndices('camera', 'b', 'monitor', '10,9,8,7,6,5,4,3,2,1,0', 30)
-	setGraphicSize('camera', screenWidth, screenHeight)
 	addLuaSprite('camera', true)
 	setLuaCamera('camera', 'ui')
 	setProperty('camera.visible', false)
@@ -368,7 +349,6 @@ function onCreatePost()
 
 	makeAnimatedLuaSprite('static', 'fnaf1/gameplay/static')
 	addAnimationByPrefix('static', 'a', 'static', 60)
-	setGraphicSize('static', screenWidth, screenHeight)
 
 	makeLuaSprite('camBorder', 'fnaf1/gameplay/camBorder', 0, -1) -- the border on the cameras
 
@@ -504,7 +484,7 @@ function onCameraOpen()
 	removeLuaSprite('officeButtonLeft', false)
 	removeLuaSprite('officeButtonRight', false)
 
-	runHaxeCode('game.callOnLuas("onCameraChange", [' .. curCam .. ']);')
+	runHaxeCode('game.callOnLuas("onCameraChange", [' .. curCam .. '])')
 
 	addLuaSprite('curCamSpr')
 	setLuaCamera('curCamSpr', 'items')
@@ -534,8 +514,6 @@ function onCameraOpen()
 
 	addLuaSprite('camChangeAnim')
 	setLuaCamera('camChangeAnim', 'ui')
-
-	setProperty('static.alpha', clickteamToFlixelAlpha(150 + math.random(0, 50) + (staticAltValB * 15)))
 end
 
 -- camera system
@@ -547,8 +525,6 @@ function onCameraUpdate()
 			runHaxeCode('game.callOnLuas("onCameraChange", [' .. curCam .. ']);')
 		end
 	end
-
-	setProperty('static.alpha', clickteamToFlixelAlpha(150 + math.random(0, 50) + (staticAltValB * 15)))
 end
 
 -- when you change cameras
@@ -568,7 +544,7 @@ function onCameraChange(cam)
 	playAnim('camChangeAnim', 'a', true)
 	runHaxeCode([[
 		var camChange = game.getLuaObject('camChangeAnim', false);
-		camChange.animation.finishCallback = _ -> {camChange.visible = false;}
+		camChange.animation.finishCallback = _ -> camChange.visible = false;
 	]])
 
 	if cam == 6 then
@@ -638,12 +614,14 @@ function onUpdate(elapsed)
 
 			camera.animation.finishCallback = _ -> {
 				camera.visible = false;
-				if(]] .. tostring(cameraActive) .. [[) game.callOnLuas('onCameraOpen', []);
+				if (]] .. tostring(cameraActive) .. [[) game.callOnLuas('onCameraOpen', []);
 			};
-			if(!]] .. tostring(cameraActive) .. [[) game.callOnLuas("onCameraClose", []);
+			if (!]] .. tostring(cameraActive) .. [[) game.callOnLuas("onCameraClose", []);
 		]])
 	end
 	if not getProperty('camera.visible') and cameraActive then runHaxeCode('game.callOnLuas("onCameraUpdate", []);') end
+
+	setProperty('static.alpha', clickteamToFlixelAlpha(150 + (getRandomInt(1, 50) - 1) + (static.valueB * 15)))
 
 	if camFollow.valueA == 0 then
 		camFollow.valueB = camFollow.valueB + (1 * playbackRate)
@@ -767,9 +745,7 @@ function die()
 		runHaxeCode([[
 			var camera = game.getLuaObject('camera', false);
 
-			camera.animation.finishCallback = _ -> {
-				camera.visible = false;
-			};
+			camera.animation.finishCallback = _ -> camera.visible = false;
 			game.callOnLuas("onCameraClose", []);
 		]])
 	end
@@ -834,15 +810,7 @@ function onTimeChange(time)
 	setTextString('timeNum', time) 
 	if time == 6 then openCustomSubstate('win', true) end
 end
-function onDestroy() 
-	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine") 
-	setPropertyFromClass('flixel.FlxG', 'mouse.visible', false)
 
-	runHaxeCode([[
-        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon16.png'));
-        Application.current.window.setIcon(icon);
-    ]])
-end
 function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
 function luaTweenExists(tag) return runHaxeCode("return game.modchartTweens.exists('" .. tag .. "')") end
 function round(num, decimal_places) return math.floor(num * (10 ^ (decimal_places or 0)) + 0.5) / (10 ^ (decimal_places or 0)) end
