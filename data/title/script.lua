@@ -30,8 +30,8 @@ tweens = {
 	end,
 	['adAlpha2'] = function() 
 		loadSong('what-day')
-		soundStop('music')
-		soundStop('static')
+		funcs.soundStop('music')
+		funcs.soundStop('static')
 	end
 }
 
@@ -48,7 +48,7 @@ substatesCreate = {
 	['newGame'] = function()
 		makeLuaSprite('ad', 'fnaf1/ad/newspaper')
 		addLuaSprite('ad')
-		setLuaCamera('ad', 'newGame')
+		funcs.setLuaCamera('ad', 'newGame')
 		setProperty('ad.alpha', 0)
 		doTweenAlpha('adAlpha1', 'ad', 1, 2 / playbackRate, 'linear')
 
@@ -58,7 +58,7 @@ substatesCreate = {
 
 substatesUpdate = {
 	['newGame'] = function()
-		if (keyboardJustPressed('ENTER') or mouseClicked()) and not luaTweenExists('adAlpha2') and getProperty('ad.alpha') == 1 then 
+		if (keyboardJustPressed('ENTER') or mouseClicked()) and not funcs.luaTweenExists('adAlpha2') and getProperty('ad.alpha') == 1 then 
 			cancelTimer('ad')
 			doTweenAlpha('adAlpha2', 'ad', 0, 2 / playbackRate, 'linear') 
 		end
@@ -78,11 +78,13 @@ customNightOptionCooldown = 0
 mouseOverlapCustomNight = nil
 
 function onCreatePost()
+	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
 	if getDataFromSave('fnaf1', 'beatGame') ~= true then setDataFromSave('fnaf1', 'beatGame', false) end
 	if getDataFromSave('fnaf1', 'beat6') ~= true then setDataFromSave('fnaf1', 'beat6', false) end
 	if getDataFromSave('fnaf1', 'night') > 5 then setDataFromSave('fnaf1', 'night', 5) end
 	flushSaveData('fnaf1')
-	makeCamera('newGame')
+
+	funcs.makeCamera('newGame')
 
 	makeAnimatedLuaSprite('fred', 'fnaf1/title/fred')
 	addAnimationByPrefix('fred', 'a', 'fred', 0, false)
@@ -100,7 +102,7 @@ function onCreatePost()
 	makeLuaSprite('line', 'fnaf1/title/line', 0, -35)
 	addLuaSprite('line')
 	setObjectCamera('line', 'other')
-	setProperty('line.alpha', clickteamToFlixelAlpha(200))
+	setProperty('line.alpha', funcs.clickteamToFlixelAlpha(200))
 
 	makeAnimatedLuaSprite('blip', 'fnaf1/title/blip')
 	addAnimationByPrefix('blip', 'a', 'blip', 6)
@@ -169,13 +171,13 @@ function onCreatePost()
 	addLuaSprite('curSelect')
 	setObjectCamera('curSelect', 'other')
 
-	soundLoad('music', 'fnaf1/title/darkness music', true)
+	funcs.soundLoad('music', 'fnaf1/title/darkness music', true)
 	--runHaxeCode("game.modchartSounds.get('music').persist = true")
-	soundLoad('static', 'fnaf1/title/static2')
+	funcs.soundLoad('static', 'fnaf1/title/static2')
 	--runHaxeCode("game.modchartSounds.get('static').persist = true")
-	soundLoad('select', 'fnaf1/title/blip3')
-	soundPlay('music')
-	soundPlay('static')
+	funcs.soundLoad('select', 'fnaf1/title/blip3')
+	funcs.soundPlay('music')
+	funcs.soundPlay('static')
 
 	runTimer('staticAlpha', 0.09 / playbackRate, 0)
 	runTimer('fredAlpha', 0.3 / playbackRate, 0)
@@ -196,7 +198,7 @@ function onUpdate(elapsed)
 	if (keyJustPressed('down') or keyJustPressed('up')) then changeSelection((keyJustPressed('down') and 1) or (keyJustPressed('up') and -1)) end
 
 	-- have to do the option shit like this because they have different x positions so i can't just do a `for` loop
-	mouseOverlapNewGame = mouseOverlap('newGame', 'other')
+	mouseOverlapNewGame = funcs.mouseOverlap('newGame', 'other')
 	if not mouseOverlapNewGame and newGameOptionCooldown >= 0 then newGameOptionCooldown = (newGameOptionCooldown - elapsed) end
 	if mouseOverlapNewGame and newGameOptionCooldown <= 0 and curSelected ~= 0 then 
 		newGameOptionCooldown = 0.1
@@ -204,7 +206,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapContinue = mouseOverlap('continue', 'other')
+	mouseOverlapContinue = funcs.mouseOverlap('continue', 'other')
 	if not mouseOverlapContinue and continueOptionCooldown >= 0 then continueOptionCooldown = (continueOptionCooldown - elapsed) end
 	if mouseOverlapContinue and continueOptionCooldown <= 0 and curSelected ~= 1 then 
 		continueOptionCooldown = 0.1
@@ -212,7 +214,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapNight6 = mouseOverlap('night6', 'other') and getDataFromSave('fnaf1', 'beatGame')
+	mouseOverlapNight6 = funcs.mouseOverlap('night6', 'other') and getDataFromSave('fnaf1', 'beatGame')
 	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) end
 	if mouseOverlapNight6 and night6OptionCooldown <= 0 and curSelected ~= 2 then 
 		night6OptionCooldown = 0.1
@@ -220,7 +222,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapCustomNight = mouseOverlap('customNight', 'other') and getDataFromSave('fnaf1', 'beat6')
+	mouseOverlapCustomNight = funcs.mouseOverlap('customNight', 'other') and getDataFromSave('fnaf1', 'beat6')
 	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
 	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
 		customNightOptionCooldown = 0.1
@@ -228,21 +230,21 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	if keyboardJustPressed('ENTER') or ((mouseOverlap('newGame', 'other') or mouseOverlap('continue', 'other') or mouseOverlap('night6', 'other') or mouseOverlap('customNight', 'other')) and mouseClicked()) then
-		switch(curSelected, {
+	if keyboardJustPressed('ENTER') or ((funcs.mouseOverlap('newGame', 'other') or funcs.mouseOverlap('continue', 'other') or funcs.mouseOverlap('night6', 'other') or funcs.mouseOverlap('customNight', 'other')) and mouseClicked()) then
+		funcs.switch(curSelected, {
 			[0] = function() openCustomSubstate('newGame', true) end,
 			[1] = function()
 				loadSong('what-day')
-				soundStop('music')
-				soundStop('static')
+				funcs.soundStop('music')
+				funcs.soundStop('static')
 			end,
 			[2] = function()
 				setDataFromSave('fnaf1', 'night', 6)
 				flushSaveData('fnaf1')
 
 				loadSong('what-day')
-				soundStop('music')
-				soundStop('static')
+				funcs.soundStop('music')
+				funcs.soundStop('static')
 			end--[[,
 			[3] = function() loadSong('custom-night') end]]
 		})
@@ -261,75 +263,10 @@ function changeSelection(a)
 	setProperty('nightTxt.visible', curSelected == 1)
 	setProperty('night.visible', curSelected == 1)
 
-	soundPlay('select', true)
+	funcs.soundPlay('select', true)
 end
 
 function onCustomSubstateCreate(t) if substatesCreate[t] then substatesCreate[t]() end end
 function onCustomSubstateUpdate(t) if substatesUpdate[t] then substatesUpdate[t]() end end
-function luaTweenExists(tag) return runHaxeCode("return game.modchartTweens.exists('" .. tag .. "')") end
-function switch(case, cases) if cases[case] ~= nil then return cases[case]() elseif cases.default ~= nil then return cases.default() end end
-function clickteamToFlixelAlpha(value) return 1 - (value / 255) end
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
 function onTweenCompleted(t) if tweens[t] then tweens[t]() end end
-function mouseOverlap(obj, mouseCamera, offsetX, offsetY)
-	offsetX = offsetX or 0
-	offsetY = offsetY or 0
-	local overlapX = (getMouseX(mouseCamera) + offsetX) >= getProperty(obj .. '.x') and (getMouseX(mouseCamera) + offsetX) <= getProperty(obj .. '.x') + getProperty(obj .. '.width')
-	local overlapY = (getMouseY(mouseCamera) + offsetY) >= getProperty(obj .. '.y') and (getMouseY(mouseCamera) + offsetY) <= getProperty(obj .. '.y') + getProperty(obj .. '.height')
-	return overlapX and overlapY
-end
-function makeCamera(tag, x, y, transparent, width, height)
-	transparent = transparent or false
-	x = x or 0
-	y = y or 0
-	width = width or screenWidth
-	height = height or screenHeight
-	runHaxeCode([[
-		var ]] .. tag .. [[ = new FlxCamera(]] .. x .. [[, ]] .. y .. [[, ]] .. width .. [[, ]] .. height .. [[, 1);
-		var transparent = ]] .. tostring(transparent) .. [[;
-		]] .. tag .. [[.follow(null);
-		]] .. tag .. [[.bgColor = (transparent ? 0x00 : 0xFF) + 000000;
-		FlxG.cameras.add(]] .. tag .. [[);
-		setVar(']] .. tag .. [[', ]] .. tag .. [[);
-	]])
-end
-function setLuaCamera(obj, cam)
-	runHaxeCode([[
-		var a = game.getLuaObject(']] .. obj .. [[');
-		var b = getVar(']] .. cam .. [[');
-
-		if (a != null || b != null) a.cameras = [b];
-
-		trace('camera: ' + getVar(']] .. cam .. [['));
-		trace('object: ' + a);
-	]])
-end
-function soundLoad(tag, path, loop)
-	loop = loop or false
-	runHaxeCode([[
-		if (Paths.fileExists('sounds/]] .. path .. [[.ogg')) {
-			var a = new FlxSound().loadEmbedded(Paths.sound(']] .. path .. [['), ]] .. tostring(loop) .. [[);
-			FlxG.sound.list.add(a);
-			a.pitch = game.playbackRate;
-			game.modchartSounds.set(']] .. tag .. [[', a);
-		} else game.addTextToDebug('soundLoad: Sound file "]] .. path .. [[" was not found.', 0xFFFF0000);
-	]])
-end
-function soundPlay(tag, forceRestart, volume)
-	forceRestart = forceRestart or true
-	volume = volume or 1
-	runHaxeCode([[
-		var a = game.modchartSounds.get(']] .. tag .. [[');
-		if (game.modchartSounds.exists(']] .. tag .. [[')) {
-			a.volume = ]] .. volume .. [[;
-			a.play(]] .. tostring(forceRestart) .. [[);
-		} else game.addTextToDebug('soundPlay: Sound tag "]] .. tag .. [[" was not found.', 0xFFFF0000);
-	]])
-end
-function soundStop(tag)
-	runHaxeCode([[
-		var a = game.modchartSounds.get(']] .. tag .. [[');
-		if (game.modchartSounds.exists(']] .. tag .. [[')) a.stop();
-		else game.addTextToDebug('soundStop: Sound tag "]] .. tag .. [[" was not found.', 0xFFFF0000);
-	]])
-end
