@@ -661,7 +661,7 @@ function onUpdate(elapsed)
 	setProperty('curCamSpr.x', (curCam == 9 or curCam == 6) and 0 or getProperty('camsFollow.x'))
 
 	if funcs.mouseOverlap('muteCall', 'other') and mouseClicked() and getProperty('muteCall.visible') then
-		funcs.soundStop('call1')
+		for i = 1, 5 do funcs.soundStop('call' .. i) end
 		setProperty('muteCall.visible', false)
 		cancelTimer('muteCall')
 	end
