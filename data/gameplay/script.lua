@@ -1,5 +1,3 @@
-funcs = nil
-
 -- camera shit --
 mouseOverlapCamera = nil
 cameraCooldown = 0
@@ -145,8 +143,7 @@ camFollow = {
 
 -- extra script shit --
 timers = {
-	['clock'] = function() restartSong() end, -- when the clock hits 6 it restarts the song
-	['redCircleVisible'] = function() setProperty('redCircle.visible', (not getProperty('redCircle.visible'))) end, -- the red circle thingie on the cams
+	['redCircleVisible'] = function() setProperty('redCircle.visible', not getProperty('redCircle.visible')) end, -- the red circle thingie on the cams
 	['powerDrain'] = function()
 		if died then return end
 		if math.floor(power / 10) >= 1 then 
@@ -154,8 +151,6 @@ timers = {
 			runHaxeCode("game.callOnLuas('onPowerChange', [])")
 		else die() end
 	end,
-	['circusSound'] = function() if getRandomInt(1, 30) == 1 then funcs.soundPlay('circus', false, 0.05) end end,
-	['doorPoundingSound'] = function() if getRandomInt(1, 50) == 1 then funcs.soundPlay('doorPounding', false, 0.6) end end,
 	['thing'] = function() static.valueB = getRandomInt(1, 3) - 1 end,
 	['muteCall'] = function() setProperty('muteCall.visible', not getProperty('muteCall.visible')) end,
 	['extraPowerDrain'] = function() power = power - 1 end
@@ -170,22 +165,16 @@ tweens = {
 		setProperty('win6.visible', true)
 
 		doTweenY('win5Y', 'win5', 186, 5 / playbackRate, 'linear')
-		funcs.soundPlay('chimes')
-
-		if night < 5 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1)
-		else setDataFromSave('fnaf1', 'night', 5) end
-		flushSaveData('fnaf1')
 	end,
 	['win5Y'] = function() 
 		win.valueA = 1
 		setProperty('win5.visible', false)
-		funcs.soundPlay('cheer') 
 	end,
 	['winCamAlpha2'] = function() 
-		if night == 5 then loadSong('ending-1')
+		--[[if night == 5 then loadSong('ending-1')
 		elseif night == 6 then loadSong('ending-2')
-		elseif night == 7 then loadSong('ending-3')
-		else loadSong('what-day') end
+		elseif night == 7 then loadSong('ending-3')]]
+		--[[else]] loadSong('what-day') --[[end]]
 	end
 }
 
@@ -196,19 +185,6 @@ win = {
 
 substatesCreate = {
 	['win'] = function()
-		funcs.soundStop('door')
-		funcs.soundStop('camMonitor')
-		if died then funcs.soundStop('powerDown')
-		else 
-			funcs.soundStop('bgHum')
-			funcs.soundStop('deskFan')
-		end
-	
-		funcs.soundStop('circus')
-		funcs.soundStop('doorPounding')
-		if cameraActive then funcs.soundStop('tapeEject') end
-		if rightLight or leftLight then funcs.soundStop('light') end
-		
 		makeLuaSprite('winBg')
 		makeGraphic('winBg', screenWidth, screenHeight, '000000')
 		addLuaSprite('winBg')
@@ -251,7 +227,7 @@ substatesUpdate = {
 
 function onCreatePost()
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
-	night = getDataFromSave('fnaf1', 'night')
+	--night = getDataFromSave('fnaf1', 'night')
 
 	funcs.makeCamera('visuals')
 	funcs.makeCamera('items')
@@ -319,10 +295,8 @@ function onCreatePost()
 	makeGraphic('freddyNose', 20, 10, 'FFFFFF')
 
 	makeLuaSprite('scroll', nil, 640, 359) -- the scroll thing that makes you go left and right
-	funcs.setLuaCamera('scroll', 'visuals')
 
 	makeLuaSprite('camsFollow')
-	funcs.setLuaCamera('camsFollow', 'visuals')
 
 	runHaxeCode('getVar("visuals").follow(game.getLuaObject("scroll", false));')
 
@@ -369,7 +343,6 @@ function onCreatePost()
 
 	makeAnimatedLuaSprite('camChangeAnim', 'fnaf1/gameplay/camChange') -- the white static animation thing that plays when you change cameras
 	addAnimationByPrefix('camChangeAnim', 'a', 'camChange', 42, false)
-	setGraphicSize('camChangeAnim', screenWidth, screenHeight)
 
 	makeLuaSprite('cameraButton', 'fnaf1/gameplay/cameraButton', 255, 638) -- the camera monitor's button
 	addLuaSprite('cameraButton', true)
@@ -377,7 +350,6 @@ function onCreatePost()
 
 	makeLuaSprite('cameraHitbox', nil, getProperty('cameraButton.x'), getProperty('cameraButton.y')) -- the camera monitor's button's hitbox
 	makeGraphic('cameraHitbox', getProperty('cameraButton.width'), screenHeight - getProperty('cameraButton.height'), '000000')
-	funcs.setLuaCamera('cameraHitbox', 'ui')
 
 	makeLuaSprite('powerLeftTxt', 'fnaf1/gameplay/powerLeftTxt', 38, 631)
 	addLuaSprite('powerLeftTxt', true)
@@ -418,7 +390,7 @@ function onCreatePost()
 	setProperty('muteCall.alpha', funcs.clickteamToFlixelAlpha(100))
 	setProperty('muteCall.visible', false)
 
-	makeLuaText('night', night, 150, getProperty('nightTxt.x') + 8, getProperty('nightTxt.y') - 7.75)
+	makeLuaText('night', '1', 150, getProperty('nightTxt.x') + 8, getProperty('nightTxt.y') - 7.75)
 	addLuaText('night')
 	setTextFont('night', 'fnafFont.ttf')
 	setTextSize('night', 40)
@@ -439,34 +411,11 @@ function onCreatePost()
 
 	makeLuaSprite('redCircle', 'fnaf1/gameplay/redCircle', 68, 52) -- the red circle thingie on cams again
 
-	funcs.soundLoad('camMonitor', 'fnaf1/gameplay/camMonitor')
-	funcs.soundLoad('deskFan', 'fnaf1/gameplay/deskFan', true)
-	funcs.soundLoad('bgHum', 'fnaf1/gameplay/bgHum', true)
-	funcs.soundLoad('camChange', 'fnaf1/gameplay/camChange')
-	funcs.soundLoad('light', 'fnaf1/gameplay/light', true)
-	funcs.soundLoad('door', 'fnaf1/gameplay/door')
-	funcs.soundLoad('circus', 'fnaf1/gameplay/circus')
-	funcs.soundLoad('tapeEject', 'fnaf1/gameplay/tapeEject')
-	funcs.soundLoad('doorPounding', 'fnaf1/gameplay/doorPounding')
-	funcs.soundLoad('nose', 'fnaf1/gameplay/nose')
-	funcs.soundLoad('powerDown', 'fnaf1/gameplay/powerDown')
-	funcs.soundLoad('chimes', 'fnaf1/win/chimes 2')
-	funcs.soundLoad('cheer', 'fnaf1/win/CROWD_SMALL_CHIL_EC049202')
-	funcs.soundLoad('call1', 'fnaf1/gameplay/voiceover1c')
-	funcs.soundLoad('call2', 'fnaf1/gameplay/voiceover2a')
-	funcs.soundLoad('call3', 'fnaf1/gameplay/voiceover3')
-	funcs.soundLoad('call4', 'fnaf1/gameplay/voiceover4')
-	funcs.soundLoad('call5', 'fnaf1/gameplay/voiceover5')
-
-	funcs.soundPlay('bgHum', false, 0.3)
-	funcs.soundPlay('deskFan', false, 0.4)
-	if night <= 5 then funcs.soundPlay('call' .. night) end
-
 	runTimer('clock', 540 / playbackRate)
 	runTimer('redCircleVisible', 1 / playbackRate, 0)
 	runTimer('powerDrain', 1 / playbackRate, 0)
 
-	if night > 1 then runTimer('extraPowerDrain', ((night == 2 and 6) or (night == 3 and 5) or (night == 4 and 4) or (night >= 5 and 3)) / playbackRate, 0) end
+	--if night > 1 then runTimer('extraPowerDrain', ((night == 2 and 6) or (night == 3 and 5) or (night == 4 and 4) or (night >= 5 and 3)) / playbackRate, 0) end
 
 	runTimer('circusSound', 5 / playbackRate, 0)
 	runTimer('doorPoundingSound', 10 / playbackRate, 0)
@@ -477,8 +426,6 @@ end
 function onCameraOpen()
 	camUsage = 1
 	doLight(nil, true)
-	setSoundVolume('deskFan', 0.2)
-	funcs.soundPlay('tapeEject')
 
 	removeLuaSprite('office', false)
 	removeLuaSprite('desk', false)
@@ -532,7 +479,6 @@ end
 
 -- when you change cameras
 function onCameraChange(cam)
-	funcs.soundPlay('camChange')
 	if lastCam ~= curCam then playAnim('cam' .. lastCam .. 'ButtonSpr', 'default', true) end
 	if getProperty('cam' .. cam .. 'ButtonSpr.animation.curAnim.name') ~= 'selected' then
 		playAnim('cam' .. cam .. 'ButtonSpr', 'selected')
@@ -558,8 +504,6 @@ end
 
 function onCameraClose()
 	camUsage = 0
-	setSoundVolume('deskFan', 0.6)
-	funcs.soundStop('tapeEject')
 
 	addLuaSprite('office')
 	addLuaSprite('desk')
@@ -610,7 +554,6 @@ function onUpdate(elapsed)
 
 		setProperty('camera.visible', true)
 		playAnim('camera', cameraActive and 'a' or 'b', true)
-		funcs.soundPlay('camMonitor')
 
 		runHaxeCode([[
 			var camera = game.getLuaObject('camera', false);
@@ -661,7 +604,6 @@ function onUpdate(elapsed)
 	setProperty('curCamSpr.x', (curCam == 9 or curCam == 6) and 0 or getProperty('camsFollow.x'))
 
 	if funcs.mouseOverlap('muteCall', 'other') and mouseClicked() and getProperty('muteCall.visible') then
-		for i = 1, 5 do funcs.soundStop('call' .. i) end
 		setProperty('muteCall.visible', false)
 		cancelTimer('muteCall')
 	end
@@ -676,14 +618,18 @@ function onUpdate(elapsed)
 	end
 	changeTime = true
 
-	if not cameraActive and not died then
+	if not cameraActive then
 		if funcs.mouseOverlap('lightButtonLeft', 'other', shadersEnabled and -8 or 0, shadersEnabled and -10 or 0) and mouseClicked() then doLight('left')
 		elseif funcs.mouseOverlap('lightButtonRight', 'other', 310) and mouseClicked() then doLight('right') end
+
+		debugPrint('wasdwasdwasdwasdwasdwasdwaxdwasdwasdwasd')
 
 		if funcs.mouseOverlap('doorButtonLeft', 'other', shadersEnabled and -8 or 0, shadersEnabled and 7 or 0) and mouseClicked() and getProperty('leftDoor.animation.curAnim.finished') then doDoor('left')
 		elseif funcs.mouseOverlap('doorButtonRight', 'other', 310) and mouseClicked() and getProperty('rightDoor.animation.curAnim.finished') then doDoor('right') end
 
-		if funcs.mouseOverlap('freddyNose', 'other', getProperty('scroll.x') - 637) and mouseClicked() then funcs.soundPlay('nose') end
+		debugPrint('wasdwasdwasdwasdwasdwasdwaxdwasdwasdwasd')
+
+		if funcs.mouseOverlap('freddyNose', 'other', getProperty('scroll.x') - 637) and mouseClicked() then end
 	end
 
 	rightLightUsage = rightLight and 1 or 0
@@ -696,7 +642,6 @@ end
 function doDoor(side)
 	if side == 'right' then rightDoor = not rightDoor 
 	elseif side == 'left' then leftDoor = not leftDoor end
-	funcs.soundPlay('door')
 	playAnim(side .. 'Door', (side == 'left' and (leftDoor and 'down' or 'up')) or (side == 'right' and (rightDoor and 'down' or 'up')), true)
 
 	if side == 'left' then leftDoorUsage = leftDoor and 1 or 0
@@ -721,9 +666,6 @@ function doLight(side, cams)
 		rightLight = not rightLight
 	end
 
-	if leftLight or rightLight then funcs.soundPlay('light')
-	else funcs.soundStop('light') end
-
 	playAnim('office', (leftLight and 'lightLeft') or (rightLight and 'lightRight') or 'default', true)
 	doButton()
 end
@@ -735,15 +677,12 @@ end
 
 function die()
 	died = true
-	funcs.soundStop('bgHum')
-	funcs.soundStop('deskFan')
 
 	if cameraActive then
 		cameraActive = false
 
 		setProperty('camera.visible', true)
 		playAnim('camera', 'b', true)
-		funcs.soundPlay('camMonitor')
 
 		runHaxeCode([[
 			var camera = game.getLuaObject('camera', false);
@@ -753,8 +692,6 @@ function die()
 		]])
 	end
 
-	funcs.soundPlay('powerDown')
-	
 	removeLuaSprite('usageTxt')
 	removeLuaSprite('powerLeftTxt')
 	removeLuaSprite('usageMeter')

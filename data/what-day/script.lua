@@ -12,7 +12,6 @@ function onCreatePost()
 	addAnimationByPrefix('date', 'a', 'time', 0, false)
 	addLuaSprite('date')
 	setObjectCamera('date', 'other')
-	setProperty('date.animation.curAnim.curFrame', getDataFromSave('fnaf1', 'night') - 1)
 
 	makeAnimatedLuaSprite('blip', 'fnaf1/what day/blip')
 	addAnimationByPrefix('blip', 'a', 'blip', 45, false)
@@ -20,8 +19,8 @@ function onCreatePost()
 	setObjectCamera('blip', 'other')
 	runHaxeCode("game.getLuaObject('blip', false).animation.finishCallback = _ -> game.getLuaObject('blip', false).visible = false;")
 
-	funcs.soundLoad('blip', 'fnaf1/what day/blip3')
-	funcs.soundPlay('blip')
+	soundLoad('blip', 'fnaf1/what day/blip3')
+	soundPlay('blip')
 end
 
 function onUpdate()

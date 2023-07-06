@@ -5,20 +5,19 @@ timers = {
 tweens = {
 	['imgAlpha2'] = function() 
 		loadSong('title') 
-		funcs.soundStop('music')
+		soundStop('music')
 	end
 }
 
 function onCreatePost()
-	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
 	makeLuaSprite('img', 'fnaf1/ending 1/ending')
 	addLuaSprite('img')
 	setObjectCamera('img', 'other')
 	setProperty('img.alpha', 0)
 	doTweenAlpha('imgAlpha1', 'img', 1, 2 / playbackRate, 'linear')
 
-	funcs.soundLoad('music', 'fnaf1/ending/music box')
-	funcs.soundPlay('music')
+	soundLoad('music', 'fnaf1/ending/music box')
+	soundPlay('music')
 
 	setDataFromSave('fnaf1', 'beatGame', true)
 	flushSaveData('fnaf1')
