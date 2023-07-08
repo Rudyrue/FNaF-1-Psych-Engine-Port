@@ -128,6 +128,8 @@ rightDoorActive = false
 leftLightActive = false
 rightLightActive = false
 
+usage = 1
+
 function onCreatePost()
 	luaDebugMode = true
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
@@ -269,6 +271,11 @@ function onCreatePost()
 	addLuaSprite('camsButton')
 	setLuaCamera('camsButton', 'ui')
 
+	makeAnimatedLuaSprite('usageMeter', gameplayAssets .. 'ui/usageMeter', 120, 657)
+	addAnimationByPrefix('usageMeter', 'a', 'meter', 0, false)
+	addLuaSprite('usageMeter')
+	setLuaCamera('usageMeter', 'ui')
+
 	makeAnimatedLuaSprite('camMonitor', gameplayAssets .. 'ui/camMonitor')
 	addAnimationByPrefix('camMonitor', 'up', 'up', 30, false)
 	addAnimationByPrefix('camMonitor', 'down', 'down', 30, false)
@@ -322,10 +329,18 @@ function onCreatePost()
 	makeGraphic('rightFast', 164, 728, '47074B')
 
 	camStatic.valueB = getRandomInt(1, 3) - 1
+	runHaxeCode([[
+		setVar("camUsage", 0);
+		setVar("leftDoorUsage", 0);
+		setVar("rightDoorUsage", 0);
+		setVar("leftLightUsage", 0);
+		setVar("rightLightUsage", 0);
+	]])
 	runTimer('camStaticAlpha', 1, 0)
 end
 
 function onCamsOpen()
+	runHaxeCode('setVar("camUsage", 1)')
 	setProperty('office.visible', false)
 	setProperty('cams.alpha', 1)
 
@@ -336,6 +351,7 @@ end
 function onCamsClose()
 	setProperty('cams.alpha', 0.0001)
 	setProperty('office.visible', true)
+	runHaxeCode('setVar("camUsage", 0)')
 end
 
 function onCamsUpdate() for i = 1, #camButtons do if funcs.mouseOverlap('camBut' .. i) and mouseClicked() then doCam(i) end end end
@@ -405,6 +421,8 @@ function onUpdate()
 
 	for i = 1, #camSprites do if i ~= 6 and i ~= 9 then setProperty('cam' .. i .. '.x', getProperty('camsScroll.x')) end end
 	setProperty('camsButton.visible', canFlip)
+	usage = 1 + getProperty('camUsage') + getProperty('leftDoorUsage') + getProperty('rightDoorUsage') + getProperty('leftLightUsage') + getProperty('rightLightUsage')
+	setProperty('usageMeter.animation.curAnim.curFrame', usage - 1)
 end
 
 function doMonitor()
@@ -450,9 +468,23 @@ function doDoor(side)
 		if side == 'left' and getProperty('leftDoor.animation.curAnim.finished') then
 			leftDoorActive = not leftDoorActive
 			playAnim('leftDoor', leftDoorActive and 'down' or 'up', true)
+			if leftDoorActive then runHaxeCode('game.getLuaObject("leftDoor", false).animation.finishCallback = _ -> setVar("leftDoorUsage", 1);')
+			elseif not leftDoorActive then 
+				runHaxeCode([[
+					setVar("leftDoorUsage", 0);
+					game.getLuaObject('leftDoor', false).animation.finishCallback = null;
+				]]) 
+			end
 		elseif side == 'right' and getProperty('rightDoor.animation.curAnim.finished') then
 			rightDoorActive = not rightDoorActive
 			playAnim('rightDoor', rightDoorActive and 'down' or 'up', true)
+			if rightDoorActive then runHaxeCode('game.getLuaObject("rightDoor", false).animation.finishCallback = _ -> setVar("rightDoorUsage", 1);')
+			elseif not rightDoorActive then 
+				runHaxeCode([[
+					setVar("rightDoorUsage", 0);
+					game.getLuaObject('rightDoor', false).animation.finishCallback = null;
+				]]) 
+			end
 		end
 	else
 		if leftDoorActive then playAnim('leftDoor', 'up', true) end
@@ -483,6 +515,8 @@ function doLight(side)
 		rightLightActive = false
 	end
 
+	runHaxeCode('setVar("leftLightUsage", ' .. tostring(leftLightActive) .. ' ? 1 : 0)')
+	runHaxeCode('setVar("rightLightUsage", ' .. tostring(rightLightActive) .. ' ? 1 : 0)')
 	doButton()
 end
 
