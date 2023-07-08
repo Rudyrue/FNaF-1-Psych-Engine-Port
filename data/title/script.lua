@@ -24,9 +24,6 @@ timers = {
 tweens = {
 	['adAlpha1'] = function() 
 		setProperty('camOther.visible', false)
-
-		setDataFromSave('fnaf1', 'night', 1)
-		flushSaveData('fnaf1')
 	end,
 	['adAlpha2'] = function() 
 		loadSong('what-day')
@@ -190,7 +187,7 @@ function onUpdate(elapsed)
 	if (keyJustPressed('down') or keyJustPressed('up')) then changeSelection((keyJustPressed('down') and 1) or (keyJustPressed('up') and -1)) end
 
 	-- have to do the option shit like this because they have different x positions so i can't just do a `for` loop
-	mouseOverlapNewGame = funcs.mouseOverlap('newGame', 'other')
+	mouseOverlapNewGame = funcs.mouseOverlap('newGame')
 	if not mouseOverlapNewGame and newGameOptionCooldown >= 0 then newGameOptionCooldown = (newGameOptionCooldown - elapsed) end
 	if mouseOverlapNewGame and newGameOptionCooldown <= 0 and curSelected ~= 0 then 
 		newGameOptionCooldown = 0.1
@@ -198,7 +195,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapContinue = funcs.mouseOverlap('continue', 'other')
+	mouseOverlapContinue = funcs.mouseOverlap('continue')
 	if not mouseOverlapContinue and continueOptionCooldown >= 0 then continueOptionCooldown = (continueOptionCooldown - elapsed) end
 	if mouseOverlapContinue and continueOptionCooldown <= 0 and curSelected ~= 1 then 
 		continueOptionCooldown = 0.1
@@ -206,7 +203,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapNight6 = funcs.mouseOverlap('night6', 'other') and getDataFromSave('fnaf1', 'beatGame')
+	mouseOverlapNight6 = funcs.mouseOverlap('night6')
 	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) end
 	if mouseOverlapNight6 and night6OptionCooldown <= 0 and curSelected ~= 2 then 
 		night6OptionCooldown = 0.1
@@ -214,7 +211,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	mouseOverlapCustomNight = funcs.mouseOverlap('customNight', 'other') and getDataFromSave('fnaf1', 'beat6')
+	mouseOverlapCustomNight = funcs.mouseOverlap('customNight')
 	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
 	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
 		customNightOptionCooldown = 0.1
@@ -222,7 +219,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	if keyboardJustPressed('ENTER') or ((funcs.mouseOverlap('newGame', 'other') or funcs.mouseOverlap('continue', 'other') or funcs.mouseOverlap('night6', 'other') or funcs.mouseOverlap('customNight', 'other')) and mouseClicked()) then
+	if keyboardJustPressed('ENTER') or ((funcs.mouseOverlap('newGame') or funcs.mouseOverlap('continue') or funcs.mouseOverlap('night6') or funcs.mouseOverlap('customNight')) and mouseClicked()) then
 		funcs.switch(curSelected, {
 			[0] = function() openCustomSubstate('newGame', true) end,
 			[1] = function()
@@ -231,9 +228,6 @@ function onUpdate(elapsed)
 				soundStop('static')
 			end,
 			[2] = function()
-				setDataFromSave('fnaf1', 'night', 6)
-				flushSaveData('fnaf1')
-
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')

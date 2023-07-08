@@ -7,7 +7,6 @@ tweens = {
 }
 
 function onCreatePost()
-	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
 	makeAnimatedLuaSprite('date', 'fnaf1/what day/time', 533, 270)
 	addAnimationByPrefix('date', 'a', 'time', 0, false)
 	addLuaSprite('date')
@@ -25,7 +24,7 @@ end
 
 function onUpdate()
 	date.valueA = date.valueA + (1 * playbackRate)
-	if date.valueA > 130 and not funcs.luaTweenExists('dateAlpha') then doTweenAlpha('dateAlpha', 'date', 0, 1 / playbackRate, 'linear') end
+	if date.valueA > 130 and not luaTweenExists('dateAlpha') then doTweenAlpha('dateAlpha', 'date', 0, 1 / playbackRate, 'linear') end
 end
 
 function onTweenCompleted(t) if tweens[t] then tweens[t]() end end

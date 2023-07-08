@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="743" height="128">
+  <SubTexture name="10 cam" x="3" y="3"  width="305" height="26" frameX="-0" frameY="-0" frameWidth="305" frameHeight="26"/>
+  <SubTexture name="8 cam" x="3" y="35"  width="305" height="26" frameX="-0" frameY="-0" frameWidth="305" frameHeight="26"/>
+  <SubTexture name="9 cam" x="3" y="67"  width="284" height="26" frameX="-0" frameY="-0" frameWidth="284" frameHeight="26"/>
+  <SubTexture name="2 cam" x="3" y="99"  width="239" height="26" frameX="-0" frameY="-0" frameWidth="239" frameHeight="26"/>
+  <SubTexture name="1 cam" x="248" y="99"  width="217" height="26" frameX="-0" frameY="-0" frameWidth="217" frameHeight="26"/>
+  <SubTexture name="7 cam" x="293" y="67"  width="196" height="26" frameX="-0" frameY="-0" frameWidth="196" frameHeight="26"/>
+  <SubTexture name="5 cam" x="471" y="99"  width="195" height="26" frameX="-0" frameY="-0" frameWidth="195" frameHeight="26"/>
+  <SubTexture name="3 cam" x="314" y="3"  width="192" height="26" frameX="-0" frameY="-0" frameWidth="192" frameHeight="26"/>
+  <SubTexture name="4 cam" x="314" y="35"  width="192" height="26" frameX="-0" frameY="-0" frameWidth="192" frameHeight="26"/>
+  <SubTexture name="6 cam" x="495" y="67"  width="151" height="26" frameX="-0" frameY="-0" frameWidth="151" frameHeight="26"/>
+  <SubTexture name="11 cam" x="512" y="3"  width="228" height="24" frameX="-0" frameY="-0" frameWidth="228" frameHeight="24"/>
+</TextureAtlas>

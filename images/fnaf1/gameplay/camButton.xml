@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Created with Free texture packer v0.6.7 http://free-tex-packer.com
--->
-<TextureAtlas imagePath="texture.png" width="118" height="39">
-  <SubTexture name="button 0000" x="59" y="0"  width="59" height="39" frameX="-1" frameY="-0" frameWidth="60" frameHeight="40"/>
-  <SubTexture name="button 0001" x="0" y="0"  width="59" height="39" frameX="-1" frameY="-0" frameWidth="60" frameHeight="40"/>
-</TextureAtlas>

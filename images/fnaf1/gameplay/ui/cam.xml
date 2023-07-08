@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="46" height="130">
+  <SubTexture name="Stopped" x="3" y="3" width="40" height="59" rotated="true"  frameX="-1" frameY="-0" frameWidth="60" frameHeight="40"/>
+  <SubTexture name="User Defined 12 0000" x="3" y="68" width="40" height="59" rotated="true"  frameX="-1" frameY="-0" frameWidth="60" frameHeight="40"/>
+  <SubTexture name="User Defined 12 0001" x="3" y="3" width="40" height="59" rotated="true"  frameX="-1" frameY="-0" frameWidth="60" frameHeight="40"/>
+</TextureAtlas>

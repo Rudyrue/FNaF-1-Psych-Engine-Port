@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="3212" height="2332">
+  <SubTexture name="cam7Chica 0000" x="3" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam7Chica 0001" x="3" y="1609"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam7Default 0000" x="729" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam7Freddy 0000" x="1455" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+</TextureAtlas>

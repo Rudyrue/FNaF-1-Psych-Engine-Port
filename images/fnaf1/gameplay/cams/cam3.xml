@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Created with Free texture packer v0.6.7 http://free-tex-packer.com
+-->
+<TextureAtlas imagePath="texture.png" width="8030" height="5544">
+  <SubTexture name="cam3Bonnie 0000" x="3" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Bonnie 0001" x="3" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Default 0001" x="3" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0000" x="3" y="4821"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0003" x="1609" y="4821"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0004" x="729" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0005" x="729" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0006" x="729" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0007" x="1455" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0008" x="1455" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0009" x="1455" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0010" x="2181" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0011" x="2181" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0012" x="2181" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0013" x="2907" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0014" x="2907" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0015" x="2907" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0016" x="3633" y="3215" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0017" x="3215" y="4821"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0018" x="3633" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0019" x="3633" y="1609" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0020" x="4821" y="3"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0021" x="6427" y="3"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0022" x="4821" y="729"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0023" x="6427" y="729"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0024" x="4821" y="1455"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0025" x="6427" y="1455"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0026" x="4359" y="2181" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0027" x="4359" y="3787"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0028" x="5085" y="2181" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0029" x="5811" y="2181" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0030" x="5965" y="3787"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0031" x="6537" y="2181" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0032" x="7263" y="2181" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Default 0000" x="3" y="3" width="720" height="1600" rotated="true"  frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0001" x="3" y="4821"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+  <SubTexture name="cam3Foxy 0002" x="3" y="4821"  width="1600" height="720" frameX="-0" frameY="-0" frameWidth="1600" frameHeight="720"/>
+</TextureAtlas>
