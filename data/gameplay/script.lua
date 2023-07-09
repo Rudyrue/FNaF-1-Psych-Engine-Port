@@ -152,6 +152,9 @@ function onCreatePost()
 	setProperty('fan.animation.curAnim.frameRate', 59.4)
 	playAnim('fan', 'a', true)
 
+	makeLuaSprite('freddyNose', nil, 674, 236)
+	makeGraphic('freddyNose', 8, 8, 'FF0000')
+
 	makeAnimatedLuaSprite('leftDoor', gameplayAssets .. 'office/leftDoor', 72)
 	addAnimationByPrefix('leftDoor', 'a', 'down', 0, false) -- fix for sm playing the object's anim on addAnimMethod functions
 	addAnimationByPrefix('leftDoor', 'down', 'down', 30, false)
@@ -337,12 +340,28 @@ function onCreatePost()
 		setVar("rightLightUsage", 0);
 	]])
 	runTimer('camStaticAlpha', 1, 0)
+
+	soundLoad('nose', gameplayAssets .. 'freddyNose')
+	soundLoad('fan', gameplayAssets .. 'fan', true)
+	soundLoad('coldPresence', gameplayAssets .. 'coldPresence', true)
+	soundLoad('openCam', gameplayAssets .. 'openCam')
+	soundLoad('closeCam', gameplayAssets .. 'closeCam')
+	soundLoad('tapeEject', gameplayAssets .. 'tapeEject')
+	soundLoad('camChange', gameplayAssets .. 'camChange')
+	soundLoad('door', gameplayAssets .. 'door')
+	soundLoad('light', gameplayAssets .. 'light', true)
+
+	soundPlay('coldPresence', false, 0.5)
+	soundPlay('fan', false, 0.25)
+	soundPlay('light', false, 0)
 end
 
 function onCamsOpen()
 	runHaxeCode('setVar("camUsage", 1)')
 	setProperty('office.visible', false)
 	setProperty('cams.alpha', 1)
+	setSoundVolume('fan', 0.1)
+	soundPlay('tapeEject')
 
 	doCam()
 	doLight()
@@ -352,6 +371,8 @@ function onCamsClose()
 	setProperty('cams.alpha', 0.0001)
 	setProperty('office.visible', true)
 	runHaxeCode('setVar("camUsage", 0)')
+	setSoundVolume('fan', 0.25)
+	soundStop('tapeEject')
 end
 
 function onCamsUpdate() for i = 1, #camButtons do if funcs.mouseOverlap('camBut' .. i) and mouseClicked() then doCam(i) end end end
@@ -372,6 +393,8 @@ function onUpdate()
 
 		if getProperty('officeScroll.x') < 640 then setProperty('officeScroll.x', 640)
 		elseif getProperty('officeScroll.x') > 960 then setProperty('officeScroll.x', 960) end
+
+		if funcs.mouseOverlap('freddyNose', getProperty('officeScroll.x') - 640) and mouseClicked() then soundPlay('nose', true) end
 
 		if (funcs.mouseOverlap('doorLeftButton') or funcs.mouseOverlap('doorRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() then doDoor(funcs.mouseOverlap('doorLeftButton') and 'left' or 'right') end
 		if (funcs.mouseOverlap('lightLeftButton') or funcs.mouseOverlap('lightRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() then doLight(funcs.mouseOverlap('lightLeftButton') and 'left' or 'right') end
@@ -428,6 +451,8 @@ end
 function doMonitor()
 	setProperty('camMonitor.visible', true)
 	playAnim('camMonitor', camsActive and 'up' or 'down', true)
+	soundStop('openCam')
+	soundPlay((camsActive and 'open' or 'close') .. 'Cam', true)
 	runHaxeCode([[
 		var camMonitor = game.getLuaObject('camMonitor', false);
 		var camsActive:Bool = ]] .. tostring(camsActive) .. [[;
@@ -459,6 +484,8 @@ function doCam(cam)
 
 	setProperty('camBlip.visible', true)
 	playAnim('camBlip', 'a', true)
+
+	soundPlay('camChange', true)
 end
 
 function doDoor(side)
@@ -493,6 +520,8 @@ function doDoor(side)
 		rightDoorActive = false
 	end
 
+	soundPlay('door', true)
+
 	doButton()
 end
 
@@ -514,6 +543,8 @@ function doLight(side)
 		leftLightActive = false
 		rightLightActive = false
 	end
+
+	setSoundVolume('light', (leftLightActive or rightLightActive) and 1 or 0)
 
 	runHaxeCode('setVar("leftLightUsage", ' .. tostring(leftLightActive) .. ' ? 1 : 0)')
 	runHaxeCode('setVar("rightLightUsage", ' .. tostring(rightLightActive) .. ' ? 1 : 0)')
