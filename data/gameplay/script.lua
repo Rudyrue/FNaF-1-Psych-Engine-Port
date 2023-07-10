@@ -86,7 +86,25 @@ camButtons = {
 }
 
 timers = {
-	['camStaticAlpha'] = function() camStatic.valueB = getRandomInt(1, 3) - 1 end
+	['camStaticAlpha'] = function() camStatic.valueB = getRandomInt(1, 3) - 1 end,
+	['minuteCounter'] = function()
+		minuteCounter = minuteCounter + 1
+
+		if minuteCounter >= 90 then
+			minuteCounter = 1
+			curTime = curTime + 1
+			setTextString('hour', curTime)
+		end
+	end,
+	['powerDrain'] = function()
+		if power > 0 then
+			power = power - usage
+		else
+			power = 0
+			blackout()
+			cancelTimer('powerDrain')
+		end
+	end
 }
 
 camStatic = {
@@ -119,6 +137,8 @@ gameplayAssets = 'fnaf1/gameplay/'
 camsActive = false
 canFlip = true
 
+powerDown = false
+
 lastCam = nil
 curCam = 1
 
@@ -129,6 +149,11 @@ leftLightActive = false
 rightLightActive = false
 
 usage = 1
+
+curTime = 0
+minuteCounter = 0
+
+power = 999
 
 function onCreatePost()
 	luaDebugMode = true
@@ -142,6 +167,7 @@ function onCreatePost()
 	addAnimationByPrefix('officeSpr', 'default', 'default', 0, false)
 	addAnimationByPrefix('officeSpr', 'lightLeft', 'lightLeft', 0, false)
 	addAnimationByPrefix('officeSpr', 'lightRight', 'lightRight', 0, false)
+	addAnimationByPrefix('officeSpr', 'blackout', 'blackout', 0, false)
 	addLuaSprite('officeSpr')
 	setLuaCamera('officeSpr', 'office')
 
@@ -306,7 +332,7 @@ function onCreatePost()
 	addLuaSprite('usage')
 	setLuaCamera('usage', 'ui')
 
-	makeLuaText('hour', '12', 300, 885, 20)
+	makeLuaText('hour', '12', 300, 890, 20)
 	setTextFont('hour', 'hourFont.ttf')
 	setTextAlignment('hour', 'right')
 	setTextSize('hour', 56)
@@ -355,7 +381,9 @@ function onCreatePost()
 		setVar("leftLightUsage", 0);
 		setVar("rightLightUsage", 0);
 	]])
-	runTimer('camStaticAlpha', 1, 0)
+	runTimer('camStaticAlpha', 1 / playbackRate, 0)
+	runTimer('minuteCounter', 1 / playbackRate, 0)
+	runTimer('powerDrain', 1 / playbackRate, 0)
 
 	soundLoad('nose', gameplayAssets .. 'freddyNose')
 	soundLoad('fan', gameplayAssets .. 'fan', true)
@@ -366,6 +394,8 @@ function onCreatePost()
 	soundLoad('camChange', gameplayAssets .. 'camChange')
 	soundLoad('door', gameplayAssets .. 'door')
 	soundLoad('light', gameplayAssets .. 'light', true)
+	soundLoad('powerDown', gameplayAssets .. 'powerDown')
+	soundLoad('powerDownAmbience', gameplayAssets .. 'blackoutAmbience', true)
 
 	soundPlay('coldPresence', false, 0.5)
 	soundPlay('fan', false, 0.25)
@@ -412,8 +442,8 @@ function onUpdate()
 
 		if funcs.mouseOverlap('freddyNose', getProperty('officeScroll.x') - 640) and mouseClicked() then soundPlay('nose', true) end
 
-		if (funcs.mouseOverlap('doorLeftButton') or funcs.mouseOverlap('doorRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() then doDoor(funcs.mouseOverlap('doorLeftButton') and 'left' or 'right') end
-		if (funcs.mouseOverlap('lightLeftButton') or funcs.mouseOverlap('lightRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() then doLight(funcs.mouseOverlap('lightLeftButton') and 'left' or 'right') end
+		if (funcs.mouseOverlap('doorLeftButton') or funcs.mouseOverlap('doorRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() and not powerDown then doDoor(funcs.mouseOverlap('doorLeftButton') and 'left' or 'right') end
+		if (funcs.mouseOverlap('lightLeftButton') or funcs.mouseOverlap('lightRightButton', getProperty('officeScroll.x') - 637)) and mouseClicked() and not powerDown then doLight(funcs.mouseOverlap('lightLeftButton') and 'left' or 'right') end
 	end
 
 	if camsScroll.valueA == 0 then
@@ -448,11 +478,13 @@ function onUpdate()
 		end
 	end
 
-	if funcs.mouseOverlap('flipUp') and canFlip then
-		camsActive = not camsActive
-		doMonitor()
-		canFlip = false
-	elseif funcs.mouseOverlap('flipDown') then canFlip = true end
+	if not powerDown then
+		if funcs.mouseOverlap('flipUp') and canFlip then
+			camsActive = not camsActive
+			doMonitor()
+			canFlip = false
+		elseif funcs.mouseOverlap('flipDown') then canFlip = true end
+	end
 
 	if not getProperty('camMonitor.visible') and camsActive then runHaxeCode("game.callOnLuas('onCamsUpdate', [])") end
 	camStatic.valueA = 150 + (getRandomInt(1, 50) - 1) + (camStatic.valueB * 15)
@@ -462,6 +494,7 @@ function onUpdate()
 	setProperty('camsButton.visible', canFlip)
 	usage = 1 + getProperty('camUsage') + getProperty('leftDoorUsage') + getProperty('rightDoorUsage') + getProperty('leftLightUsage') + getProperty('rightLightUsage')
 	setProperty('usageMeter.animation.curAnim.curFrame', usage - 1)
+	setTextString('power', math.floor(power / 10))
 end
 
 function doMonitor()
@@ -469,6 +502,7 @@ function doMonitor()
 	playAnim('camMonitor', camsActive and 'up' or 'down', true)
 	soundStop('openCam')
 	soundPlay((camsActive and 'open' or 'close') .. 'Cam', true)
+
 	runHaxeCode([[
 		var camMonitor = game.getLuaObject('camMonitor', false);
 		var camsActive:Bool = ]] .. tostring(camsActive) .. [[;
@@ -478,6 +512,37 @@ function doMonitor()
 		};
 		if (!camsActive) game.callOnLuas('onCamsClose', []);
 	]])
+end
+
+function blackout()
+	powerDown = true
+	soundStop('fan')
+	soundStop('coldPresence')
+
+	soundPlay('powerDown')
+	soundPlay('powerDownAmbience')
+
+	removeLuaSprite('officeButtonLeft')
+	removeLuaSprite('officeButtonRight')
+	removeLuaSprite('fan')
+	removeLuaSprite('amTxt')
+	removeLuaSprite('night')
+	removeLuaSprite('camsButton')
+	removeLuaSprite('powerLeft')
+	removeLuaSprite('usage')
+	removeLuaSprite('usageMeter')
+	removeLuaSprite('percentage')
+
+	removeLuaText('power')
+	removeLuaText('hour')
+	removeLuaText('curNight')
+	doDoor()
+	doLight()
+	playAnim('officeSpr', 'blackout', true)
+	if camsActive then
+		camsActive = false
+		doMonitor()
+	end
 end
 
 function doCam(cam)
