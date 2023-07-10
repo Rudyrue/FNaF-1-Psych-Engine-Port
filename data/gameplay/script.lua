@@ -306,12 +306,28 @@ function onCreatePost()
 	addLuaSprite('usage')
 	setLuaCamera('usage', 'ui')
 
-	makeLuaText('hour', '12', 0, 1137, 20)
+	makeLuaText('hour', '12', 300, 885, 20)
 	setTextFont('hour', 'hourFont.ttf')
+	setTextAlignment('hour', 'right')
 	setTextSize('hour', 56)
 	setTextBorder('hour', 0, '0x0')
 	addLuaText('hour')
 	setLuaCamera('hour', 'ui')
+	
+	makeLuaText('curNight', '1', 0, 1220, 56)
+	setTextFont('curNight', 'nightNumFont.ttf')
+	setTextSize('curNight', 56)
+	setTextBorder('curNight', 0, '0x0')
+	addLuaText('curNight')
+	setLuaCamera('curNight', 'ui')
+
+	makeLuaText('power', '99', 300, 50, 612)
+	setTextFont('power', 'powerFont.ttf')
+	setTextAlignment('hour', 'right')
+	setTextSize('power', 56)
+	setTextBorder('power', 0, '0x0')
+	addLuaText('power')
+	setLuaCamera('power', 'ui')
 
 	makeLuaSprite('leftLow')
 	makeGraphic('leftLow', 539, 719, '7B2B7F')
@@ -464,7 +480,6 @@ function doMonitor()
 	]])
 end
 
-wtf = false
 function doCam(cam)
 	cam = cam or curCam
 
@@ -495,6 +510,7 @@ function doDoor(side)
 		if side == 'left' and getProperty('leftDoor.animation.curAnim.finished') then
 			leftDoorActive = not leftDoorActive
 			playAnim('leftDoor', leftDoorActive and 'down' or 'up', true)
+			soundPlay('door', true)
 			if leftDoorActive then runHaxeCode('game.getLuaObject("leftDoor", false).animation.finishCallback = _ -> setVar("leftDoorUsage", 1);')
 			elseif not leftDoorActive then 
 				runHaxeCode([[
@@ -505,6 +521,7 @@ function doDoor(side)
 		elseif side == 'right' and getProperty('rightDoor.animation.curAnim.finished') then
 			rightDoorActive = not rightDoorActive
 			playAnim('rightDoor', rightDoorActive and 'down' or 'up', true)
+			soundPlay('door', true)
 			if rightDoorActive then runHaxeCode('game.getLuaObject("rightDoor", false).animation.finishCallback = _ -> setVar("rightDoorUsage", 1);')
 			elseif not rightDoorActive then 
 				runHaxeCode([[
@@ -519,8 +536,6 @@ function doDoor(side)
 		leftDoorActive = false
 		rightDoorActive = false
 	end
-
-	soundPlay('door', true)
 
 	doButton()
 end

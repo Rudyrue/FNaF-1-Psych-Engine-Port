@@ -7,9 +7,7 @@ blip = {
 }
 
 timers = {
-	['staticAlpha'] = function()
-		setProperty('static.alpha', ctToFlixelAlpha(50 + (getRandomInt(1, 100) - 1)))
-	end,
+	['staticAlpha'] = function() setProperty('static.alpha', ctToFlixelAlpha(50 + (getRandomInt(1, 100) - 1))) end,
 	['fredAlpha'] = function()
 		setProperty('fred.alpha', ctToFlixelAlpha(getRandomInt(1, 250) - 1))
 		blip.valueA = getRandomInt(1, 3) - 1
@@ -22,9 +20,7 @@ timers = {
 }
 
 tweens = {
-	['adAlpha1'] = function() 
-		setProperty('camOther.visible', false)
-	end,
+	['adAlpha1'] = function() setProperty('camOther.visible', false) end,
 	['adAlpha2'] = function() 
 		loadSong('what-day')
 		soundStop('music')
@@ -140,9 +136,9 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', '1', 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 3)
-	setTextFont('night', 'fnafFont.ttf')
-	setTextSize('night', 35)
+	makeLuaText('night', '1', 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 11)
+	setTextFont('night', 'nightNumFont.ttf')
+	setTextSize('night', 50)
 	setTextBorder('night', 0, '0x0')
 	addLuaText('night')
 	setObjectCamera('night', 'other')
