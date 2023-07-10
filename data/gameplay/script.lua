@@ -90,21 +90,108 @@ timers = {
 	['minuteCounter'] = function()
 		minuteCounter = minuteCounter + 1
 
-		if minuteCounter >= 90 then
+		if minuteCounter >= 2 then
 			minuteCounter = 1
 			curTime = curTime + 1
 			setTextString('hour', curTime)
 		end
+
+		if curTime == 6 then openCustomSubstate('win', true) end
 	end,
 	['powerDrain'] = function()
-		if power > 0 then
-			power = power - usage
+		if power > 0 then power = power - usage
 		else
 			power = 0
 			blackout()
 			cancelTimer('powerDrain')
 		end
 	end
+}
+
+tweens = {
+	['winAlpha'] = function()
+		setProperty('office.visible', false)
+		setProperty('ui.visible', false)
+		setProperty('cams.visible', false)
+
+		setProperty('win6.visible', true)
+		doTweenY('win5Y', 'win5', 186, 5, 'linear')
+	end,
+	['win5Y'] = function()
+		soundPlay('cheer')
+		win.valueA = 1
+	end,
+	['fadeOut'] = function() 
+		closeCustomSubstate()
+		if getDataFromSave('fnaf1', 'night', 1) - 1 == 5 then loadSong('ending-1')
+		elseif getDataFromSave('fnaf1', 'night', 1) - 1 == 6 then loadSong('ending-2')
+		elseif getDataFromSave('fnaf1', 'night', 1) - 1 == 7 then loadSong('ending-3')
+		else loadSong('what-day') end
+	end
+}
+
+substatesCreate = {
+	['win'] = function()
+		runHaxeCode('for (a in game.modchartSounds) a.stop()')
+		soundPlay('chimes')
+
+		if getDataFromSave('fnaf1', 'level', 1) < 5 then setDataFromSave('fnaf1', 'level', getDataFromSave('fnaf1', 'level', 1) + 1) end
+		if getDataFromSave('fnaf1', 'night', 1) < 7 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1) end
+
+		makeLuaSprite('winBg')
+		makeGraphic('winBg', screenWidth, screenHeight, '000000')
+		addLuaSprite('winBg')
+		setLuaCamera('winBg', 'win')
+
+		makeLuaSprite('win5', 'fnaf1/win/5', 549, 298)
+		addLuaSprite('win5')
+		setLuaCamera('win5', 'win')
+
+		makeLuaSprite('win6', 'fnaf1/win/6')
+		addLuaSprite('win6')
+		setLuaCamera('win6', 'win')
+		setProperty('win6.visible', false)
+
+		makeLuaSprite('winAM', 'fnaf1/win/am', 645, 296)
+		addLuaSprite('winAM')
+		setLuaCamera('winAM', 'win')
+
+		makeLuaSprite('winTop', nil, 498, 169)
+		makeGraphic('winTop', 158, 118, '000000')
+		addLuaSprite('winTop')
+		setLuaCamera('winTop', 'win')
+
+		makeLuaSprite('winBottom', nil, 499, 385)
+		makeGraphic('winBottom', 158, 118, '000000')
+		addLuaSprite('winBottom')
+		setLuaCamera('winBottom', 'win')
+
+		doTweenAlpha('winAlpha', 'win', 1, 1, 'linear')
+	end
+}
+
+substatesUpdate = {
+	['win'] = function()
+		setProperty('win6.x', getProperty('win5.x') + 4)
+		setProperty('win6.y', getProperty('win5.y') + 110)
+
+		if win.valueA == 1 then win.valueB = win.valueB + 1 end
+
+		if win.valueB > 200 and not luaTweenExists('fadeOut') then
+			setProperty('win5.visible', false)
+			doTweenAlpha('fadeOut', 'win', 0, 0.9, 'linear')
+		end
+
+		if keyboardJustPressed('ESCAPE') then
+			closeCustomSubstate()
+			exitSong()
+		end
+	end
+}
+
+win = {
+	valueA,
+	valueB = 0
 }
 
 camStatic = {
@@ -115,6 +202,11 @@ camStatic = {
 camsScroll = {
 	valueA = 0,
 	valueB = 0
+}
+
+night = {
+	loadedLevel = 0,
+	nightNumber = 0
 }
 
 gameplayAssets = 'fnaf1/gameplay/'
@@ -162,6 +254,8 @@ function onCreatePost()
 	makeCamera('cams')
 	setProperty('cams.alpha', 0.0001)
 	makeCamera('ui')
+	makeCamera('win')
+	setProperty('win.alpha', 0)
 
 	makeAnimatedLuaSprite('officeSpr', gameplayAssets .. 'office/office')
 	addAnimationByPrefix('officeSpr', 'default', 'default', 0, false)
@@ -340,7 +434,7 @@ function onCreatePost()
 	addLuaText('hour')
 	setLuaCamera('hour', 'ui')
 	
-	makeLuaText('curNight', '1', 0, 1220, 56)
+	makeLuaText('curNight', getDataFromSave('fnaf1', 'night', 1), 0, 1220, 56)
 	setTextFont('curNight', 'nightNumFont.ttf')
 	setTextSize('curNight', 56)
 	setTextBorder('curNight', 0, '0x0')
@@ -396,6 +490,9 @@ function onCreatePost()
 	soundLoad('light', gameplayAssets .. 'light', true)
 	soundLoad('powerDown', gameplayAssets .. 'powerDown')
 	soundLoad('powerDownAmbience', gameplayAssets .. 'blackoutAmbience', true)
+
+	soundLoad('chimes', 'fnaf1/win/chimes 2')
+	soundLoad('cheer', 'fnaf1/win/CROWD_SMALL_CHIL_EC049202')
 
 	soundPlay('coldPresence', false, 0.5)
 	soundPlay('fan', false, 0.25)
@@ -637,3 +734,6 @@ function doButton()
 end
 
 function onTimerCompleted(t) if timers[t] then timers[t]() end end
+function onTweenCompleted(t) if tweens[t] then tweens[t]() end end
+function onCustomSubstateCreate(t) if substatesCreate[t] then substatesCreate[t]() end end
+function onCustomSubstateUpdate(t) if substatesUpdate[t] then substatesUpdate[t]() end end

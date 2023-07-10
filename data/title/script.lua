@@ -39,6 +39,9 @@ curSelectPositions = {
 
 substatesCreate = {
 	['newGame'] = function()
+		setDataFromSave('fnaf1', 'level', 1)
+		setDataFromSave('fnaf1', 'night', 1)
+
 		makeLuaSprite('ad', 'fnaf1/ad/newspaper')
 		addLuaSprite('ad')
 		setLuaCamera('ad', 'newGame')
@@ -73,6 +76,8 @@ mouseOverlapCustomNight = nil
 function onCreatePost()
 	luaDebugMode = true
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
+
+	if getDataFromSave('fnaf1', 'night', 1) > 5 then setDataFromSave('fnaf1', 'night', 5) end
 
 	makeCamera('newGame')
 
@@ -136,7 +141,7 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', '1', 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 11)
+	makeLuaText('night', getDataFromSave('fnaf1', 'level', 1), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 11)
 	setTextFont('night', 'nightNumFont.ttf')
 	setTextSize('night', 50)
 	setTextBorder('night', 0, '0x0')
@@ -219,11 +224,13 @@ function onUpdate(elapsed)
 		funcs.switch(curSelected, {
 			[0] = function() openCustomSubstate('newGame', true) end,
 			[1] = function()
+				setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'level', 1))
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
 			end,
 			[2] = function()
+				setDataFromSave('fnaf1', 'night', 6)
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
