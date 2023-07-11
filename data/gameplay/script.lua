@@ -136,7 +136,7 @@ substatesCreate = {
 		soundPlay('chimes')
 
 		if getDataFromSave('fnaf1', 'level', 1) < 5 then setDataFromSave('fnaf1', 'level', getDataFromSave('fnaf1', 'level', 1) + 1) end
-		if getDataFromSave('fnaf1', 'night', 1) < 7 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night') + 1) end
+		if getDataFromSave('fnaf1', 'night', 1) < 7 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night', 1) + 1) end
 
 		makeLuaSprite('winBg')
 		makeGraphic('winBg', screenWidth, screenHeight, '000000')

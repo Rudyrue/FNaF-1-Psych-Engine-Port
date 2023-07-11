@@ -10,6 +10,8 @@ tweens = {
 }
 
 function onCreatePost()
+	setDataFromSave('fnaf1', 'beatGame', true)
+
 	makeLuaSprite('img', 'fnaf1/ending 1/ending')
 	addLuaSprite('img')
 	setObjectCamera('img', 'other')
@@ -18,9 +20,6 @@ function onCreatePost()
 
 	soundLoad('music', 'fnaf1/ending/music box')
 	soundPlay('music')
-
-	setDataFromSave('fnaf1', 'beatGame', true)
-	flushSaveData('fnaf1')
 
 	runTimer('exit', 15 / playbackRate)
 end

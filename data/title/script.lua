@@ -119,22 +119,27 @@ function onCreatePost()
 	makeLuaSprite('night6', 'fnaf1/title/6th night', 172, 549)
 	addLuaSprite('night6')
 	setObjectCamera('night6', 'other')
+	setProperty('night6.visible', getDataFromSave('fnaf1', 'beatGame', false))
 
 	makeLuaSprite('customNight', 'fnaf1/title/custom night', 171, 617)
 	addLuaSprite('customNight')
 	setObjectCamera('customNight', 'other')
+	setProperty('customNight.visible', getDataFromSave('fnaf1', 'beatNight6', false))
 
 	makeLuaSprite('star1', 'fnaf1/title/star', 172, 311)
 	addLuaSprite('star1')
 	setObjectCamera('star1', 'other')
+	setProperty('star1.visible', getDataFromSave('fnaf1', 'beatGame', false))
 
 	makeLuaSprite('star2', 'fnaf1/title/star', 249, 311)
 	addLuaSprite('star2')
 	setObjectCamera('star2', 'other')
+	setProperty('star2.visible', getDataFromSave('fnaf1', 'beatNight6', false))
 
 	makeLuaSprite('star3', 'fnaf1/title/star', 324, 311)
 	addLuaSprite('star3')
 	setObjectCamera('star3', 'other')
+	setProperty('star3.visible', getDataFromSave('fnaf1', 'beatCustom', false))
 
 	makeLuaSprite('nightTxt', 'fnaf1/title/night', getProperty('continue.x') + 2, getProperty('continue.y') + 42)
 	addLuaSprite('nightTxt')
@@ -175,6 +180,8 @@ function onCreatePost()
 end
 
 function onUpdate(elapsed)
+	if keyboardJustPressed('Z') then loadSong('what-day') end
+
 	if fred.valueA == 99 then setProperty('fred.animation.curAnim.curFrame', 3)
 	elseif fred.valueA == 98 then setProperty('fred.animation.curAnim.curFrame', 2)
 	elseif fred.valueA == 97 then setProperty('fred.animation.curAnim.curFrame', 1)
@@ -185,7 +192,7 @@ function onUpdate(elapsed)
 
 	setProperty('blip.visible', blip.valueA == 1)
 
-	if (keyJustPressed('down') or keyJustPressed('up')) then changeSelection((keyJustPressed('down') and 1) or (keyJustPressed('up') and -1)) end
+	if keyboardJustPressed('UP') or keyboardJustPressed('DOWN') then changeSelection(keyboardJustPressed('UP') and -1 or 1) end
 
 	-- have to do the option shit like this because they have different x positions so i can't just do a `for` loop
 	mouseOverlapNewGame = funcs.mouseOverlap('newGame')
@@ -195,24 +202,24 @@ function onUpdate(elapsed)
 		curSelected = 0
 		changeSelection()
 	end
-
+		
 	mouseOverlapContinue = funcs.mouseOverlap('continue')
 	if not mouseOverlapContinue and continueOptionCooldown >= 0 then continueOptionCooldown = (continueOptionCooldown - elapsed) end
 	if mouseOverlapContinue and continueOptionCooldown <= 0 and curSelected ~= 1 then 
 		continueOptionCooldown = 0.1
 		curSelected = 1
 		changeSelection()
-	end
-
-	mouseOverlapNight6 = funcs.mouseOverlap('night6')
+	end	
+		
+	mouseOverlapNight6 = funcs.mouseOverlap('night6') and getProperty('night6.visible')
 	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) end
 	if mouseOverlapNight6 and night6OptionCooldown <= 0 and curSelected ~= 2 then 
 		night6OptionCooldown = 0.1
 		curSelected = 2
 		changeSelection()
 	end
-
-	mouseOverlapCustomNight = funcs.mouseOverlap('customNight')
+		
+	mouseOverlapCustomNight = funcs.mouseOverlap('customNight') and getProperty('customNight.visible')
 	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
 	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
 		customNightOptionCooldown = 0.1
@@ -220,7 +227,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 
-	if keyboardJustPressed('ENTER') or ((funcs.mouseOverlap('newGame') or funcs.mouseOverlap('continue') or funcs.mouseOverlap('night6') or funcs.mouseOverlap('customNight')) and mouseClicked()) then
+	if keyboardJustPressed('ENTER') or ((mouseOverlapNewGame or mouseOverlapContinue or mouseOverlapNight6 or mouseOverlapCustomNight) and mouseClicked()) then 
 		funcs.switch(curSelected, {
 			[0] = function() openCustomSubstate('newGame', true) end,
 			[1] = function()
@@ -234,23 +241,26 @@ function onUpdate(elapsed)
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
-			end--[[,
-			[3] = function() loadSong('custom-night') end]]
+			end
 		})
 	end
 end
 
-function changeSelection(a)
-	a = a or 0
-	curSelected = curSelected + a
-	if curSelected < 0 then curSelected = 3
-	elseif curSelected > 3 then curSelected = 0 end
+function changeSelection(dir)
+	dir = dir or 0
+	curSelected = curSelected + dir
 
-	setProperty('curSelect.x', curSelectPositions[curSelected + 1][1])
-	setProperty('curSelect.y', curSelectPositions[curSelected + 1][2])
+	if curSelected < 0 then
+		if not getDataFromSave('fnaf1', 'beatGame', false) then curSelected = 1
+		elseif not getDataFromSave('fnaf1', 'beatCustom', false) then curSelected = 2
+		else curSelected = 3 end 
+	elseif (curSelected > 1 and not getProperty('night6.visible')) or (curSelected > 2 and not getProperty('customNight.visible')) or curSelected > 3 then curSelected = 0 end
 
 	setProperty('nightTxt.visible', curSelected == 1)
 	setProperty('night.visible', curSelected == 1)
+
+	setProperty('curSelect.x', curSelectPositions[curSelected + 1][1])
+	setProperty('curSelect.y', curSelectPositions[curSelected + 1][2])
 
 	soundPlay('select', true)
 end
