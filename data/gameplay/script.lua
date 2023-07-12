@@ -90,7 +90,7 @@ timers = {
 	['minuteCounter'] = function()
 		minuteCounter = minuteCounter + 1
 
-		if minuteCounter >= 2 then
+		if minuteCounter >= 90 then
 			minuteCounter = 1
 			curTime = curTime + 1
 			setTextString('hour', curTime)
@@ -98,6 +98,7 @@ timers = {
 
 		if curTime == 6 then openCustomSubstate('win', true) end
 	end,
+	['muteCall'] = function() setProperty('muteCall.visible', not getProperty('muteCall.visible')) end,
 	['powerDrain'] = function()
 		if power > 0 then power = power - usage
 		else
@@ -105,6 +106,10 @@ timers = {
 			blackout()
 			cancelTimer('powerDrain')
 		end
+	end,
+	['extraPowerDrain'] = function() 
+		if power > 0 then power = power - 1
+		else cancelTimer('extraPowerDrain') end
 	end
 }
 
@@ -123,9 +128,9 @@ tweens = {
 	end,
 	['fadeOut'] = function() 
 		closeCustomSubstate()
-		if getDataFromSave('fnaf1', 'night', 1) - 1 == 5 then loadSong('ending-1')
-		elseif getDataFromSave('fnaf1', 'night', 1) - 1 == 6 then loadSong('ending-2')
-		elseif getDataFromSave('fnaf1', 'night', 1) - 1 == 7 then loadSong('ending-3')
+		if night == 5 then loadSong('ending-1')
+		elseif night == 6 then loadSong('ending-2')
+		elseif night == 7 then loadSong('ending-3')
 		else loadSong('what-day') end
 	end
 }
@@ -136,7 +141,7 @@ substatesCreate = {
 		soundPlay('chimes')
 
 		if getDataFromSave('fnaf1', 'level', 1) < 5 then setDataFromSave('fnaf1', 'level', getDataFromSave('fnaf1', 'level', 1) + 1) end
-		if getDataFromSave('fnaf1', 'night', 1) < 7 then setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'night', 1) + 1) end
+		if night < 7 then setDataFromSave('fnaf1', 'night', night + 1) end
 
 		makeLuaSprite('winBg')
 		makeGraphic('winBg', screenWidth, screenHeight, '000000')
@@ -250,6 +255,7 @@ power = 999
 function onCreatePost()
 	luaDebugMode = true
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
+	night = getDataFromSave('fnaf1', 'night', 1)
 	makeCamera('office')
 	makeCamera('cams')
 	setProperty('cams.alpha', 0.0001)
@@ -337,6 +343,10 @@ function onCreatePost()
 	addLuaSprite('camBorder')
 	setLuaCamera('camBorder', 'cams')
 
+	makeLuaSprite('audioOnly', gameplayAssets .. 'ui/audioOnly', 464, 69)
+	addLuaSprite('audioOnly')
+	setLuaCamera('audioOnly', 'cams')
+
 	makeAnimatedLuaSprite('map', gameplayAssets .. 'ui/map', 848, 313)
 	addAnimationByPrefix('map', 'a', 'Stopped', 0)
 	setProperty('map.animation.curAnim.frameRate', 1.2)
@@ -362,7 +372,6 @@ function onCreatePost()
 	setLuaCamera('camBlip', 'cams')
 	runHaxeCode([[
 		var camBlip = game.getLuaObject('camBlip', false);
-
 		camBlip.animation.finishCallback = _ -> camBlip.visible = false;
 	]])
 
@@ -426,6 +435,12 @@ function onCreatePost()
 	addLuaSprite('usage')
 	setLuaCamera('usage', 'ui')
 
+	makeLuaSprite('muteCall', gameplayAssets .. 'ui/muteCall', 27, 22)
+	addLuaSprite('muteCall')
+	setLuaCamera('muteCall', 'ui')
+	setProperty('muteCall.alpha', ctToFlixelAlpha(100))
+	setProperty('muteCall.visible', false)
+
 	makeLuaText('hour', '12', 300, 890, 20)
 	setTextFont('hour', 'hourFont.ttf')
 	setTextAlignment('hour', 'right')
@@ -434,7 +449,7 @@ function onCreatePost()
 	addLuaText('hour')
 	setLuaCamera('hour', 'ui')
 	
-	makeLuaText('curNight', getDataFromSave('fnaf1', 'night', 1), 0, 1220, 56)
+	makeLuaText('curNight', night, 0, 1220, 56)
 	setTextFont('curNight', 'nightNumFont.ttf')
 	setTextSize('curNight', 56)
 	setTextBorder('curNight', 0, '0x0')
@@ -475,9 +490,12 @@ function onCreatePost()
 		setVar("leftLightUsage", 0);
 		setVar("rightLightUsage", 0);
 	]])
+
 	runTimer('camStaticAlpha', 1 / playbackRate, 0)
 	runTimer('minuteCounter', 1 / playbackRate, 0)
 	runTimer('powerDrain', 1 / playbackRate, 0)
+	runTimer('muteCall', 20 / playbackRate, 2)
+	if night > 1 then runTimer('extraPowerDrain', ((night == 2 and 6) or (night == 3 and 5) or (night == 4 and 4) or (night >= 5 and 3)) / playbackRate, 0) end
 
 	soundLoad('nose', gameplayAssets .. 'freddyNose')
 	soundLoad('fan', gameplayAssets .. 'fan', true)
@@ -490,11 +508,13 @@ function onCreatePost()
 	soundLoad('light', gameplayAssets .. 'light', true)
 	soundLoad('powerDown', gameplayAssets .. 'powerDown')
 	soundLoad('powerDownAmbience', gameplayAssets .. 'blackoutAmbience', true)
+	for i = 1, 5 do soundLoad('call' .. i, gameplayAssets .. 'call' .. i) end
 
 	soundLoad('chimes', 'fnaf1/win/chimes 2')
 	soundLoad('cheer', 'fnaf1/win/CROWD_SMALL_CHIL_EC049202')
 
 	soundPlay('coldPresence', false, 0.5)
+	if night <= 5 then soundPlay('call' .. night) end
 	soundPlay('fan', false, 0.25)
 	soundPlay('light', false, 0)
 end
@@ -504,6 +524,7 @@ function onCamsOpen()
 	setProperty('office.visible', false)
 	setProperty('cams.alpha', 1)
 	setSoundVolume('fan', 0.1)
+	setSoundVolume('call' .. night, 0.5)
 	soundPlay('tapeEject')
 
 	doCam()
@@ -515,6 +536,7 @@ function onCamsClose()
 	setProperty('office.visible', true)
 	runHaxeCode('setVar("camUsage", 0)')
 	setSoundVolume('fan', 0.25)
+	setSoundVolume('call' .. night, 1)
 	soundStop('tapeEject')
 end
 
@@ -583,6 +605,12 @@ function onUpdate()
 		elseif funcs.mouseOverlap('flipDown') then canFlip = true end
 	end
 
+	if funcs.mouseOverlap('muteCall') and mouseClicked() and getProperty('muteCall.visible') then
+		setProperty('muteCall.visible', false)
+		soundStop('call' .. night)
+		cancelTimer('muteCall')
+	end
+
 	if not getProperty('camMonitor.visible') and camsActive then runHaxeCode("game.callOnLuas('onCamsUpdate', [])") end
 	camStatic.valueA = 150 + (getRandomInt(1, 50) - 1) + (camStatic.valueB * 15)
 	setProperty('camStatic.alpha', ctToFlixelAlpha(camStatic.valueA))
@@ -591,7 +619,7 @@ function onUpdate()
 	setProperty('camsButton.visible', canFlip)
 	usage = 1 + getProperty('camUsage') + getProperty('leftDoorUsage') + getProperty('rightDoorUsage') + getProperty('leftLightUsage') + getProperty('rightLightUsage')
 	setProperty('usageMeter.animation.curAnim.curFrame', usage - 1)
-	setTextString('power', math.floor(power / 10))
+	if power >= 1 then setTextString('power', math.floor(power / 10)) end
 end
 
 function doMonitor()
@@ -661,6 +689,8 @@ function doCam(cam)
 
 	setProperty('camBlip.visible', true)
 	playAnim('camBlip', 'a', true)
+
+	setProperty('audioOnly.visible', curCam == 6)
 
 	soundPlay('camChange', true)
 end
