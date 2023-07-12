@@ -1,5 +1,5 @@
 timers = {
-	['disclaimer'] = function() doTweenAlpha('disclaimerAlpha2', 'disclaimer', 0, 1 / playbackRate, 'linear') end
+	['disclaimer'] = function() doTweenAlpha('disclaimerAlpha2', 'disclaimer', 0, 1.01 / playbackRate, 'linear') end
 }
 
 tweens = {

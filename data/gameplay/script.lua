@@ -174,7 +174,7 @@ substatesCreate = {
 		addLuaSprite('winBottom')
 		setLuaCamera('winBottom', 'win')
 
-		doTweenAlpha('winAlpha', 'win', 1, 1 / playbackRate, 'linear')
+		doTweenAlpha('winAlpha', 'win', 1, 1.01 / playbackRate, 'linear')
 	end
 }
 
