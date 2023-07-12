@@ -110,7 +110,9 @@ timers = {
 	['extraPowerDrain'] = function() 
 		if power > 0 then power = power - 1
 		else cancelTimer('extraPowerDrain') end
-	end
+	end,
+	['circusChance'] = function() if getRandomInt(1, 30) == 1 then soundPlay('circus', false, 0.05) end end,
+	['doorPoundChance'] = function() if getRandomInt(1, 50) == 1 then soundPlay('doorPound', false, (10 + (getRandomInt(1, 40) - 1)) / 100) end end
 }
 
 tweens = {
@@ -495,6 +497,8 @@ function onCreatePost()
 	runTimer('minuteCounter', 1 / playbackRate, 0)
 	runTimer('powerDrain', 1 / playbackRate, 0)
 	runTimer('muteCall', 20 / playbackRate, 2)
+	runTimer('circusChance', 5 / playbackRate, 0)
+	runTimer('doorPoundChance', 10 / playbackRate, 0)
 	if night > 1 then runTimer('extraPowerDrain', ((night == 2 and 6) or (night == 3 and 5) or (night == 4 and 4) or (night >= 5 and 3)) / playbackRate, 0) end
 
 	soundLoad('nose', gameplayAssets .. 'freddyNose')
@@ -508,6 +512,8 @@ function onCreatePost()
 	soundLoad('light', gameplayAssets .. 'light', true)
 	soundLoad('powerDown', gameplayAssets .. 'powerDown')
 	soundLoad('powerDownAmbience', gameplayAssets .. 'blackoutAmbience', true)
+	soundLoad('circus', gameplayAssets .. 'circus')
+	soundLoad('doorPound', gameplayAssets .. 'doorPound')
 	for i = 1, 5 do soundLoad('call' .. i, gameplayAssets .. 'call' .. i) end
 
 	soundLoad('chimes', 'fnaf1/win/chimes 2')
