@@ -1,23 +1,24 @@
 timers = {
-	['disclaimer'] = function() doTweenAlpha('disclaimerAlpha', 'disclaimer', 0, 1 / playbackRate, 'linear') end
+	['disclaimer'] = function() doTweenAlpha('disclaimerAlpha2', 'disclaimer', 0, 1 / playbackRate, 'linear') end
 }
 
 tweens = {
-	['disclaimerAlpha'] = function() loadSong((getRandomInt(1, 1000) - 1) == 1 and 'creepy-start' or 'title') end
+	['disclaimerAlpha1'] = function() runTimer('disclaimer', 2 / playbackRate) end,
+	['disclaimerAlpha2'] = function() loadSong((getRandomInt(1, 1000) - 1) == 1 and 'creepy-start' or 'title') end
 }
 
 function onCreatePost()
 	makeLuaSprite('disclaimer', 'fnaf1/disclaimer/disclaimer', 426, 249)
 	addLuaSprite('disclaimer')
 	setObjectCamera('disclaimer', 'other')
-
-	runTimer('disclaimer', 2 / playbackRate)
+	setProperty('disclaimer.alpha', 0)
+	doTweenAlpha('disclaimerAlpha1', 'disclaimer', 1, 1.01 / playbackRate, 'linear')
 end
 
 function onUpdate() 
-	if (keyboardJustPressed('ENTER') or mouseClicked()) and not luaTweenExists('disclaimerAlpha') then
+	if (keyboardJustPressed('ENTER') or mouseClicked()) and not (luaTweenExists('disclaimerAlpha1') and luaTweenExists('disclaimerAlpha2')) then
 		cancelTimer('disclaimer')
-		doTweenAlpha('disclaimerAlpha', 'disclaimer', 0, 1 / playbackRate, 'linear') 
+		doTweenAlpha('disclaimerAlpha2', 'disclaimer', 0, 1 / playbackRate, 'linear') 
 	end 
 end
 function onTimerCompleted(t) if timers[t] then timers[t]() end end

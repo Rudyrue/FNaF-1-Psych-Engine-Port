@@ -41,6 +41,7 @@ substatesCreate = {
 	['newGame'] = function()
 		setDataFromSave('fnaf1', 'level', 1)
 		setDataFromSave('fnaf1', 'night', 1)
+		flushSaveData('fnaf1')
 
 		makeLuaSprite('ad', 'fnaf1/ad/newspaper')
 		addLuaSprite('ad')
@@ -49,6 +50,14 @@ substatesCreate = {
 		doTweenAlpha('adAlpha1', 'ad', 1, 2 / playbackRate, 'linear')
 
 		runTimer('ad', 5 / playbackRate)
+	end,
+	['customNight'] = function()
+		makeLuaSprite('bg')
+		makeGraphic('bg', screenWidth, screenHeight, '000000')
+		addLuaSprite('bg')
+		setLuaCamera('bg', 'customNight')
+
+		doTweenAlpha('customNightAlpha', 'customNight', 1, 0.56 / playbackRate, 'linear')
 	end
 }
 
@@ -57,6 +66,17 @@ substatesUpdate = {
 		if (keyboardJustPressed('ENTER') or mouseClicked()) and not luaTweenExists('adAlpha2') and getProperty('ad.alpha') == 1 then 
 			cancelTimer('ad')
 			doTweenAlpha('adAlpha2', 'ad', 0, 2 / playbackRate, 'linear') 
+		end
+
+		if keyboardJustPressed('ESCAPE') then
+			closeCustomSubstate()
+			exitSong()
+		end
+	end,
+	['customNight'] = function()
+		if keyboardJustPressed('ESCAPE') then
+			closeCustomSubstate()
+			exitSong()
 		end
 	end
 }
@@ -78,8 +98,11 @@ function onCreatePost()
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
 
 	if getDataFromSave('fnaf1', 'night', 1) > 5 then setDataFromSave('fnaf1', 'night', 5) end
+	flushSaveData('fnaf1')
 
 	makeCamera('newGame')
+	makeCamera('customNight')
+	setProperty('customNight.alpha', 0)
 
 	makeAnimatedLuaSprite('fred', 'fnaf1/title/fred')
 	addAnimationByPrefix('fred', 'a', 'fred', 0, false)
@@ -121,10 +144,10 @@ function onCreatePost()
 	setObjectCamera('night6', 'other')
 	setProperty('night6.visible', getDataFromSave('fnaf1', 'beatGame', false))
 
-	makeLuaSprite('customNight', 'fnaf1/title/custom night', 171, 617)
-	addLuaSprite('customNight')
-	setObjectCamera('customNight', 'other')
-	setProperty('customNight.visible', getDataFromSave('fnaf1', 'beatNight6', false))
+	makeLuaSprite('customNightTxt', 'fnaf1/title/custom night', 171, 617)
+	addLuaSprite('customNightTxt')
+	setObjectCamera('customNightTxt', 'other')
+	setProperty('customNightTxt.visible', getDataFromSave('fnaf1', 'beatNight6', false))
 
 	makeLuaSprite('star1', 'fnaf1/title/star', 172, 311)
 	addLuaSprite('star1')
@@ -167,9 +190,7 @@ function onCreatePost()
 	setObjectCamera('curSelect', 'other')
 
 	soundLoad('music', 'fnaf1/title/darkness music', true)
-	--runHaxeCode("game.modchartSounds.get('music').persist = true")
 	soundLoad('static', 'fnaf1/title/static2')
-	--runHaxeCode("game.modchartSounds.get('static').persist = true")
 	soundLoad('select', 'fnaf1/title/blip3')
 	soundPlay('music')
 	soundPlay('static')
@@ -219,7 +240,7 @@ function onUpdate(elapsed)
 		changeSelection()
 	end
 		
-	mouseOverlapCustomNight = funcs.mouseOverlap('customNight') and getProperty('customNight.visible')
+	mouseOverlapCustomNight = funcs.mouseOverlap('customNightTxt') and getProperty('customNightTxt.visible')
 	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
 	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
 		customNightOptionCooldown = 0.1
@@ -229,19 +250,20 @@ function onUpdate(elapsed)
 
 	if keyboardJustPressed('ENTER') or ((mouseOverlapNewGame or mouseOverlapContinue or mouseOverlapNight6 or mouseOverlapCustomNight) and mouseClicked()) then 
 		funcs.switch(curSelected, {
-			[0] = function() openCustomSubstate('newGame', true) end,
-			[1] = function()
+			[0] = function() openCustomSubstate('newGame', true) end, -- new game
+			[1] = function() -- continue
 				setDataFromSave('fnaf1', 'night', getDataFromSave('fnaf1', 'level', 1))
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
 			end,
-			[2] = function()
+			[2] = function() -- 6th night
 				setDataFromSave('fnaf1', 'night', 6)
 				loadSong('what-day')
 				soundStop('music')
 				soundStop('static')
-			end
+			end,
+			[3] = function() openCustomSubstate('customNight', true) end -- custom night
 		})
 	end
 end
@@ -254,7 +276,7 @@ function changeSelection(dir)
 		if not getDataFromSave('fnaf1', 'beatGame', false) then curSelected = 1
 		elseif not getDataFromSave('fnaf1', 'beatCustom', false) then curSelected = 2
 		else curSelected = 3 end 
-	elseif (curSelected > 1 and not getProperty('night6.visible')) or (curSelected > 2 and not getProperty('customNight.visible')) or curSelected > 3 then curSelected = 0 end
+	elseif (curSelected > 1 and not getProperty('night6.visible')) or (curSelected > 2 and not getProperty('customNightTxt.visible')) or curSelected > 3 then curSelected = 0 end
 
 	setProperty('nightTxt.visible', curSelected == 1)
 	setProperty('night.visible', curSelected == 1)

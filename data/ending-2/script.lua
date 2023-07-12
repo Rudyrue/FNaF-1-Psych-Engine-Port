@@ -11,6 +11,7 @@ tweens = {
 
 function onCreatePost()
 	setDataFromSave('fnaf1', 'beatNight6', true)
+	flushSaveData('fnaf1')
 
 	makeLuaSprite('img', 'fnaf1/ending 2/ending')
 	addLuaSprite('img')

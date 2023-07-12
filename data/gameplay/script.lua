@@ -93,7 +93,7 @@ timers = {
 		if minuteCounter >= 90 then
 			minuteCounter = 1
 			curTime = curTime + 1
-			setTextString('hour', curTime)
+			if luaTextExists('hour') then setTextString('hour', curTime) end
 		end
 
 		if curTime == 6 then openCustomSubstate('win', true) end
@@ -122,7 +122,7 @@ tweens = {
 		setProperty('cams.visible', false)
 
 		setProperty('win6.visible', true)
-		doTweenY('win5Y', 'win5', 186, 5, 'linear')
+		doTweenY('win5Y', 'win5', 186, 5 / playbackRate, 'linear')
 	end,
 	['win5Y'] = function()
 		soundPlay('cheer')
@@ -144,6 +144,7 @@ substatesCreate = {
 
 		if getDataFromSave('fnaf1', 'level', 1) < 5 then setDataFromSave('fnaf1', 'level', getDataFromSave('fnaf1', 'level', 1) + 1) end
 		if night < 7 then setDataFromSave('fnaf1', 'night', night + 1) end
+		flushSaveData('fnaf1')
 
 		makeLuaSprite('winBg')
 		makeGraphic('winBg', screenWidth, screenHeight, '000000')
@@ -173,7 +174,7 @@ substatesCreate = {
 		addLuaSprite('winBottom')
 		setLuaCamera('winBottom', 'win')
 
-		doTweenAlpha('winAlpha', 'win', 1, 1, 'linear')
+		doTweenAlpha('winAlpha', 'win', 1, 1 / playbackRate, 'linear')
 	end
 }
 
@@ -182,11 +183,11 @@ substatesUpdate = {
 		setProperty('win6.x', getProperty('win5.x') + 4)
 		setProperty('win6.y', getProperty('win5.y') + 110)
 
-		if win.valueA == 1 then win.valueB = win.valueB + 1 end
+		if win.valueA == 1 then win.valueB = win.valueB + (1 * playbackRate) end
 
 		if win.valueB > 200 and not luaTweenExists('fadeOut') then
 			setProperty('win5.visible', false)
-			doTweenAlpha('fadeOut', 'win', 0, 0.9, 'linear')
+			doTweenAlpha('fadeOut', 'win', 0, 0.9 / playbackRate, 'linear')
 		end
 
 		if keyboardJustPressed('ESCAPE') then
@@ -551,15 +552,15 @@ function onCamsUpdate() for i = 1, #camButtons do if funcs.mouseOverlap('camBut'
 function onUpdate()
 	if not camsActive then
 		if getProperty('officeScroll.x') > 640 then
-			if funcs.mouseOverlap('leftLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') - 2) end
-			if funcs.mouseOverlap('leftHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') - 5) end
-			if funcs.mouseOverlap('leftFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') - 5) end
+			if funcs.mouseOverlap('leftLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (2 * playbackRate)) end
+			if funcs.mouseOverlap('leftHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (5 * playbackRate)) end
+			if funcs.mouseOverlap('leftFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (5 * playbackRate)) end
 		end
 
 		if getProperty('officeScroll.x') < 960 then
-			if funcs.mouseOverlap('rightLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') + 2) end
-			if funcs.mouseOverlap('rightHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') + 5) end
-			if funcs.mouseOverlap('rightFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') + 5) end
+			if funcs.mouseOverlap('rightLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (2 * playbackRate)) end
+			if funcs.mouseOverlap('rightHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (5 * playbackRate)) end
+			if funcs.mouseOverlap('rightFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (5 * playbackRate)) end
 		end
 
 		if getProperty('officeScroll.x') < 640 then setProperty('officeScroll.x', 640)
@@ -613,7 +614,7 @@ function onUpdate()
 
 	if funcs.mouseOverlap('muteCall') and mouseClicked() and getProperty('muteCall.visible') then
 		setProperty('muteCall.visible', false)
-		soundStop('call' .. night)
+		if luaSoundExists('call' .. night) then soundStop('call' .. night) end
 		cancelTimer('muteCall')
 	end
 

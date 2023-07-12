@@ -87,8 +87,6 @@ function onDestroy()
         var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon16.png'));
         Application.current.window.setIcon(icon);
     ]])
-
-	flushSaveData('fnaf1')
 end
 
 function onPause() return Function_Stop end
