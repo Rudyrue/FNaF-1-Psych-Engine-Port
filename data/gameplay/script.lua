@@ -260,8 +260,10 @@ function onCreatePost()
 	funcs = require('mods/' .. (currentModDirectory ~= nil and (currentModDirectory .. '/')) .. 'extraFuncs')
 	night = getDataFromSave('fnaf1', 'night', 1)
 	makeCamera('office')
-	makeCamera('cams')
-	setProperty('cams.alpha', 0.0001)
+	makeCamera('camSprs')
+	makeCamera('camUi')
+	setProperty('camSprs.alpha', 0.0001)
+	setProperty('camUi.alpha', 0.0001)
 	makeCamera('ui')
 	makeCamera('win')
 	setProperty('win.alpha', 0)
@@ -283,6 +285,17 @@ function onCreatePost()
 
 	makeLuaSprite('freddyNose', nil, 674, 236)
 	makeGraphic('freddyNose', 8, 8, 'FF0000')
+
+	if shadersEnabled then
+		makeLuaSprite('shader')
+		setSpriteShader('shader', 'perspective')
+		setShaderFloat('shader', 'depth', 8.25)
+		addHaxeLibrary('ShaderFilter', 'openfl.filters')
+		runHaxeCode([[
+			getVar('office').setFilters([new ShaderFilter(game.getLuaObject('shader', false).shader)]);
+			getVar('camSprs').setFilters([new ShaderFilter(game.getLuaObject('shader', false).shader)]);
+		]])
+	end
 
 	makeAnimatedLuaSprite('leftDoor', gameplayAssets .. 'office/leftDoor', 72)
 	addAnimationByPrefix('leftDoor', 'a', 'down', 0, false) -- fix for sm playing the object's anim on addAnimMethod functions
@@ -333,46 +346,46 @@ function onCreatePost()
 			end
 			addLuaSprite('cam' .. cam)
 			setProperty('cam' .. cam .. '.alpha', 0.0001)
-			setLuaCamera('cam' .. cam, 'cams')                         
+			setLuaCamera('cam' .. cam, 'camSprs')     
 		end
 	end
 
 	makeAnimatedLuaSprite('camStatic', gameplayAssets .. 'ui/camStatic')
 	addAnimationByPrefix('camStatic', 'a', 'Stopped', 60)
 	addLuaSprite('camStatic')
-	setLuaCamera('camStatic', 'cams')
+	setLuaCamera('camStatic', 'camUi')
 
 	makeLuaSprite('camBorder', gameplayAssets .. 'ui/camBorder', 0, -1)
 	addLuaSprite('camBorder')
-	setLuaCamera('camBorder', 'cams')
+	setLuaCamera('camBorder', 'camUi')
 
 	makeLuaSprite('audioOnly', gameplayAssets .. 'ui/audioOnly', 464, 69)
 	addLuaSprite('audioOnly')
-	setLuaCamera('audioOnly', 'cams')
+	setLuaCamera('audioOnly', 'camUi')
 
 	makeAnimatedLuaSprite('map', gameplayAssets .. 'ui/map', 848, 313)
 	addAnimationByPrefix('map', 'a', 'Stopped', 0)
 	setProperty('map.animation.curAnim.frameRate', 1.2)
 	addLuaSprite('map')
 	playAnim('map', 'a', true)
-	setLuaCamera('map', 'cams')
+	setLuaCamera('map', 'camUi')
 
 	makeAnimatedLuaSprite('camTxt', gameplayAssets .. 'ui/camTxt', 832, 292)
 	for i = 1, 11 do addAnimationByPrefix('camTxt', i, i .. ' cam', 0, false) end
 	addLuaSprite('camTxt')
-	setLuaCamera('camTxt', 'cams')
+	setLuaCamera('camTxt', 'camUi')
 
 	makeAnimatedLuaSprite('redCirc', gameplayAssets .. 'ui/redCirc', 68, 52)
 	addAnimationByPrefix('redCirc', 'a', 'Stopped', 0)
 	addLuaSprite('redCirc')
 	setProperty('redCirc.animation.curAnim.frameRate', 1.2)
-	setLuaCamera('redCirc', 'cams')
+	setLuaCamera('redCirc', 'camUi')
 	playAnim('redCirc', 'a', true)
 
 	makeAnimatedLuaSprite('camBlip', gameplayAssets .. 'ui/camBlip')
 	addAnimationByPrefix('camBlip', 'a', 'Stopped', 42, false)
 	addLuaSprite('camBlip')
-	setLuaCamera('camBlip', 'cams')
+	setLuaCamera('camBlip', 'camUi')
 	runHaxeCode([[
 		var camBlip = game.getLuaObject('camBlip', false);
 		camBlip.animation.finishCallback = _ -> camBlip.visible = false;
@@ -383,11 +396,11 @@ function onCreatePost()
 		addAnimationByPrefix('camBut' .. i, 'default', 'Stopped', 0, false)
 		addAnimationByPrefix('camBut' .. i, 'selected', 'User Defined 12', 0) -- 1.8 fps
 		addLuaSprite('camBut' .. i)
-		setLuaCamera('camBut' .. i, 'cams')
+		setLuaCamera('camBut' .. i, 'camUi')
 
 		makeLuaSprite('camButTxt' .. i, gameplayAssets .. 'ui/cam' .. i, getProperty('camBut' .. i .. '.x') + camButtons[i]['txtOffset'][1], getProperty('camBut' .. i .. '.y') +  camButtons[i]['txtOffset'][2])
 		addLuaSprite('camButTxt' .. i)
-		setLuaCamera('camButTxt' .. i, 'cams')
+		setLuaCamera('camButTxt' .. i, 'camUi')
 	end
 
 	makeLuaSprite('officeScroll')
@@ -529,7 +542,8 @@ end
 function onCamsOpen()
 	runHaxeCode('setVar("camUsage", 1)')
 	setProperty('office.visible', false)
-	setProperty('cams.alpha', 1)
+	setProperty('camSprs.alpha', 1)
+	setProperty('camUi.alpha', 1)
 	setSoundVolume('fan', 0.1)
 	setSoundVolume('call' .. night, 0.5)
 	soundPlay('tapeEject')
@@ -539,7 +553,8 @@ function onCamsOpen()
 end
 
 function onCamsClose()
-	setProperty('cams.alpha', 0.0001)
+	setProperty('camSprs.alpha', 0.0001)
+	setProperty('camUi.alpha', 0.0001)
 	setProperty('office.visible', true)
 	runHaxeCode('setVar("camUsage", 0)')
 	setSoundVolume('fan', 0.25)

@@ -10,7 +10,7 @@ uniform float iTime;
 //****MAKE SURE TO remove the parameters from mainImage.
 //SHADERTOY PORT FIX
 
-uniform float depth = 5.0f;
+uniform float depth = 6.0f;
 void main() {
     float dx = distance(openfl_TextureCoordv.x, 0.5f);
     float dy = distance(openfl_TextureCoordv.y, 0.5f);
