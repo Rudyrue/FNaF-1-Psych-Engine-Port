@@ -401,7 +401,7 @@ function onUpdate(elapsed)
 
 	-- have to do the option shit like this because they have different x positions so i can't just do a `for` loop
 	mouseOverlapNewGame = funcs.mouseOverlap('newGame')
-	if not mouseOverlapNewGame and newGameOptionCooldown >= 0 then newGameOptionCooldown = (newGameOptionCooldown - elapsed) * playbackRate end
+	if not mouseOverlapNewGame and newGameOptionCooldown >= 0 then newGameOptionCooldown = (newGameOptionCooldown - elapsed) end
 	if mouseOverlapNewGame and newGameOptionCooldown <= 0 and curSelected ~= 0 then 
 		newGameOptionCooldown = 0.1
 		curSelected = 0
@@ -409,7 +409,7 @@ function onUpdate(elapsed)
 	end
 		
 	mouseOverlapContinue = funcs.mouseOverlap('continue')
-	if not mouseOverlapContinue and continueOptionCooldown >= 0 then continueOptionCooldown = (continueOptionCooldown - elapsed) * playbackRate end
+	if not mouseOverlapContinue and continueOptionCooldown >= 0 then continueOptionCooldown = (continueOptionCooldown - elapsed) end
 	if mouseOverlapContinue and continueOptionCooldown <= 0 and curSelected ~= 1 then 
 		continueOptionCooldown = 0.1
 		curSelected = 1
@@ -417,7 +417,7 @@ function onUpdate(elapsed)
 	end	
 		
 	mouseOverlapNight6 = funcs.mouseOverlap('night6') and getProperty('night6.visible')
-	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) * playbackRate end
+	if not mouseOverlapNight6 and night6OptionCooldown >= 0 then night6OptionCooldown = (night6OptionCooldown - elapsed) end
 	if mouseOverlapNight6 and night6OptionCooldown <= 0 and curSelected ~= 2 then 
 		night6OptionCooldown = 0.1
 		curSelected = 2
@@ -425,7 +425,7 @@ function onUpdate(elapsed)
 	end
 		
 	mouseOverlapCustomNight = funcs.mouseOverlap('customNightTxt') and getProperty('customNightTxt.visible')
-	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) * playbackRate end
+	if not mouseOverlapCustomNight and customNightOptionCooldown >= 0 then customNightOptionCooldown = (customNightOptionCooldown - elapsed) end
 	if mouseOverlapCustomNight and customNightOptionCooldown <= 0 and curSelected ~= 3 then 
 		customNightOptionCooldown = 0.1
 		curSelected = 3
