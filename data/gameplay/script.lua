@@ -549,18 +549,18 @@ end
 
 function onCamsUpdate() for i = 1, #camButtons do if funcs.mouseOverlap('camBut' .. i) and mouseClicked() then doCam(i) end end end
 
-function onUpdate()
+function onUpdate(elapsed)
 	if not camsActive then
 		if getProperty('officeScroll.x') > 640 then
-			if funcs.mouseOverlap('leftLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (2 * playbackRate)) end
-			if funcs.mouseOverlap('leftHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (5 * playbackRate)) end
-			if funcs.mouseOverlap('leftFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') - (5 * playbackRate)) end
+			if funcs.mouseOverlap('leftLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') - ((2 - elapsed) * playbackRate)) end
+			if funcs.mouseOverlap('leftHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') - ((5 - elapsed) * playbackRate)) end
+			if funcs.mouseOverlap('leftFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') - ((5 - elapsed) * playbackRate)) end
 		end
 
 		if getProperty('officeScroll.x') < 960 then
-			if funcs.mouseOverlap('rightLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (2 * playbackRate)) end
-			if funcs.mouseOverlap('rightHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (5 * playbackRate)) end
-			if funcs.mouseOverlap('rightFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') + (5 * playbackRate)) end
+			if funcs.mouseOverlap('rightLow') then setProperty('officeScroll.x', getProperty('officeScroll.x') + ((2 + elapsed) * playbackRate)) end
+			if funcs.mouseOverlap('rightHigh') then setProperty('officeScroll.x', getProperty('officeScroll.x') + ((5 + elapsed) * playbackRate)) end
+			if funcs.mouseOverlap('rightFast') then setProperty('officeScroll.x', getProperty('officeScroll.x') + ((5 + elapsed) * playbackRate)) end
 		end
 
 		if getProperty('officeScroll.x') < 640 then setProperty('officeScroll.x', 640)
@@ -573,30 +573,30 @@ function onUpdate()
 	end
 
 	if camsScroll.valueA == 0 then
-		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
-		setProperty('camsScroll.x', getProperty('camsScroll.x') - (1 * playbackRate))
+		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
+		setProperty('camsScroll.x', getProperty('camsScroll.x') - ((1 - elapsed) * playbackRate))
 
 		if camsScroll.valueB >= 320 then
 			camsScroll.valueA = 1
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 1 then
-		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
+		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
 
 		if camsScroll.valueB >= 100 then
 			camsScroll.valueA = 2
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 2 then
-		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
-		setProperty('camsScroll.x', getProperty('camsScroll.x') + (1 * playbackRate))
+		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
+		setProperty('camsScroll.x', getProperty('camsScroll.x') + ((1 + elapsed) * playbackRate))
 
 		if camsScroll.valueB >= 320 then
 			camsScroll.valueA = 3
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 3 then
-		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
+		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
 
 		if camsScroll.valueB >= 100 then
 			camsScroll.valueA = 0
