@@ -353,7 +353,7 @@ function onCreatePost()
 	setObjectCamera('nightTxt', 'other')
 	setProperty('nightTxt.visible', false)
 
-	makeLuaText('night', getDataFromSave('fnaf1', 'level', 1), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 11)
+	makeLuaText('night', getDataFromSave('fnaf1', 'level', 1), 0, getProperty('nightTxt.x') + 70, getProperty('nightTxt.y') - 13)
 	setTextFont('night', 'nightNumFont.ttf')
 	setTextSize('night', 50)
 	setTextBorder('night', 0, '0x0')
