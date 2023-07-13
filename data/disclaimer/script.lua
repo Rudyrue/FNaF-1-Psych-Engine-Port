@@ -16,7 +16,7 @@ function onCreatePost()
 end
 
 function onUpdate() 
-	if (keyboardJustPressed('ENTER') or mouseClicked()) and not (luaTweenExists('disclaimerAlpha1') and luaTweenExists('disclaimerAlpha2')) then
+	if (keyboardJustPressed('ENTER') or mouseClicked()) and not luaTweenExists('disclaimerAlpha1') and not luaTweenExists('disclaimerAlpha2') then
 		cancelTimer('disclaimer')
 		doTweenAlpha('disclaimerAlpha2', 'disclaimer', 0, 1 / playbackRate, 'linear') 
 	end 

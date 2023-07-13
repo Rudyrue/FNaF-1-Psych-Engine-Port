@@ -25,10 +25,16 @@ tweens = {
 		loadSong('what-day')
 		soundStop('music')
 		soundStop('static')
-	end
+	end,
+	['customNightAlpha'] = function() setProperty('camOther.visible', false) end
 }
 
 curSelected = 0
+
+freddyAi = 1
+bonnieAi = 3
+chicaAi = 3
+foxyAi = 1
 
 curSelectPositions = {
 	[1] = {104, 407}, -- new game
@@ -51,11 +57,135 @@ substatesCreate = {
 
 		runTimer('ad', 5 / playbackRate)
 	end,
-	['customNight'] = function()
+	['customNight'] = function() -- i love spaghetti
 		makeLuaSprite('bg')
 		makeGraphic('bg', screenWidth, screenHeight, '000000')
 		addLuaSprite('bg')
 		setLuaCamera('bg', 'customNight')
+
+		makeLuaSprite('customizeNight', 'fnaf1/custom night/customizeNight', 450, 40)
+		addLuaSprite('customizeNight')
+		setLuaCamera('customizeNight', 'customNight')
+
+		makeLuaSprite('freddySpr', 'fnaf1/custom night/freddy', 118, 187)
+		addLuaSprite('freddySpr')
+		setLuaCamera('freddySpr', 'customNight')
+
+		makeLuaSprite('bonnieSpr', 'fnaf1/custom night/bonnie', 403, 187)
+		addLuaSprite('bonnieSpr')
+		setLuaCamera('bonnieSpr', 'customNight')
+
+		makeLuaSprite('chicaSpr', 'fnaf1/custom night/chica', 682, 187)
+		addLuaSprite('chicaSpr')
+		setLuaCamera('chicaSpr', 'customNight')
+
+		makeLuaSprite('foxySpr', 'fnaf1/custom night/foxy', 957, 187)
+		addLuaSprite('foxySpr')
+		setLuaCamera('foxySpr', 'customNight')
+
+		makeLuaSprite('freddyTxt', 'fnaf1/custom night/freddyTxt', 145, 119)
+		addLuaSprite('freddyTxt')
+		setLuaCamera('freddyTxt', 'customNight')
+
+		makeLuaSprite('bonnieTxt', 'fnaf1/custom night/bonnieTxt', 429, 119)
+		addLuaSprite('bonnieTxt')
+		setLuaCamera('bonnieTxt', 'customNight')
+
+		makeLuaSprite('chicaTxt', 'fnaf1/custom night/chicaTxt', 716, 119)
+		addLuaSprite('chicaTxt')
+		setLuaCamera('chicaTxt', 'customNight')
+		
+		makeLuaSprite('foxyTxt', 'fnaf1/custom night/foxyTxt', 1009, 121)
+		addLuaSprite('foxyTxt')
+		setLuaCamera('foxyTxt', 'customNight')
+
+		makeLuaSprite('freddyAiLvlTxt', 'fnaf1/custom night/aiLvl', 118, 425)
+		addLuaSprite('freddyAiLvlTxt')
+		setLuaCamera('freddyAiLvlTxt', 'customNight')
+
+		makeLuaSprite('bonnieAiLvlTxt', 'fnaf1/custom night/aiLvl', 402, 425)
+		addLuaSprite('bonnieAiLvlTxt')
+		setLuaCamera('bonnieAiLvlTxt', 'customNight')
+
+		makeLuaSprite('chicaAiLvlTxt', 'fnaf1/custom night/aiLvl', 684, 425)
+		addLuaSprite('chicaAiLvlTxt')
+		setLuaCamera('chicaAiLvlTxt', 'customNight')
+
+		makeLuaSprite('foxyAiLvlTxt', 'fnaf1/custom night/aiLvl', 960, 425)
+		addLuaSprite('foxyAiLvlTxt')
+		setLuaCamera('foxyAiLvlTxt', 'customNight')
+
+		makeLuaSprite('freddyLeft', 'fnaf1/custom night/btnLeft', 117, 470)
+		addLuaSprite('freddyLeft')
+		setLuaCamera('freddyLeft', 'customNight')
+
+		makeLuaSprite('freddyRight', 'fnaf1/custom night/btnRight', 283, 470)
+		addLuaSprite('freddyRight')
+		setLuaCamera('freddyRight', 'customNight')
+
+		makeLuaSprite('bonnieLeft', 'fnaf1/custom night/btnLeft', 401, 470)
+		addLuaSprite('bonnieLeft')
+		setLuaCamera('bonnieLeft', 'customNight')
+
+		makeLuaSprite('bonnieRight', 'fnaf1/custom night/btnRight', 565, 470)
+		addLuaSprite('bonnieRight')
+		setLuaCamera('bonnieRight', 'customNight')
+
+		makeLuaSprite('chicaLeft', 'fnaf1/custom night/btnLeft', 685, 470)
+		addLuaSprite('chicaLeft')
+		setLuaCamera('chicaLeft', 'customNight')
+
+		makeLuaSprite('chicaRight', 'fnaf1/custom night/btnRight', 848, 470)
+		addLuaSprite('chicaRight')
+		setLuaCamera('chicaRight', 'customNight')
+
+		makeLuaSprite('foxyLeft', 'fnaf1/custom night/btnLeft', 964, 470)
+		addLuaSprite('foxyLeft')
+		setLuaCamera('foxyLeft', 'customNight')
+
+		makeLuaSprite('foxyRight', 'fnaf1/custom night/btnRight', 1126, 470)
+		addLuaSprite('foxyRight')
+		setLuaCamera('foxyRight', 'customNight')
+
+		makeLuaText('freddyAiLvl', freddyAi, 250, 20, 470)
+		setTextFont('freddyAiLvl', 'aiLvlFont.ttf')
+		setTextAlignment('freddyAiLvl', 'right')
+		setTextSize('freddyAiLvl', 48)
+		setTextBorder('freddyAiLvl', 0, '0x0')
+		addLuaText('freddyAiLvl')
+		setLuaCamera('freddyAiLvl', 'customNight')
+
+		makeLuaText('bonnieAiLvl', bonnieAi, 250, 303, 470)
+		setTextFont('bonnieAiLvl', 'aiLvlFont.ttf')
+		setTextAlignment('bonnieAiLvl', 'right')
+		setTextSize('bonnieAiLvl', 48)
+		setTextBorder('bonnieAiLvl', 0, '0x0')
+		addLuaText('bonnieAiLvl')
+		setLuaCamera('bonnieAiLvl', 'customNight')
+
+		makeLuaText('chicaAiLvl', chicaAi, 250, 585, 470)
+		setTextFont('chicaAiLvl', 'aiLvlFont.ttf')
+		setTextAlignment('chicaAiLvl', 'right')
+		setTextSize('chicaAiLvl', 48)
+		setTextBorder('chicaAiLvl', 0, '0x0')
+		addLuaText('chicaAiLvl')
+		setLuaCamera('chicaAiLvl', 'customNight')
+
+		makeLuaText('foxyAiLvl', foxyAi, 250, 864, 470)
+		setTextFont('foxyAiLvl', 'aiLvlFont.ttf')
+		setTextAlignment('foxyAiLvl', 'right')
+		setTextSize('foxyAiLvl', 48)
+		setTextBorder('foxyAiLvl', 0, '0x0')
+		addLuaText('foxyAiLvl')
+		setLuaCamera('foxyAiLvl', 'customNight')
+
+		makeLuaSprite('difficulties', 'fnaf1/custom night/difficulties', 116, 654)
+		addLuaSprite('difficulties')
+		setLuaCamera('difficulties', 'customNight')
+
+		makeLuaSprite('ready', 'fnaf1/custom night/ready', 1049, 628)
+		addLuaSprite('ready')
+		setLuaCamera('ready', 'customNight')
 
 		doTweenAlpha('customNightAlpha', 'customNight', 1, 0.56 / playbackRate, 'linear')
 	end
@@ -77,6 +207,55 @@ substatesUpdate = {
 		if keyboardJustPressed('ESCAPE') then
 			closeCustomSubstate()
 			exitSong()
+		end
+
+		if not luaTweenExists('customNightAlpha') then
+			if ((funcs.mouseOverlap('freddyLeft') or funcs.mouseOverlap('freddyRight')) and mouseClicked()) then
+				if funcs.mouseOverlap('freddyLeft') then freddyAi = freddyAi - 1
+				else freddyAi = freddyAi + 1 end
+			end
+
+			if freddyAi > 20 then freddyAi = 20
+			elseif freddyAi < 0 then freddyAi = 0 end
+
+			setTextString('freddyAiLvl', freddyAi)
+
+			if ((funcs.mouseOverlap('bonnieLeft') or funcs.mouseOverlap('bonnieRight')) and mouseClicked()) then
+				if funcs.mouseOverlap('bonnieLeft') then bonnieAi = bonnieAi - 1
+				else bonnieAi = bonnieAi + 1 end
+			end
+
+			if bonnieAi > 20 then bonnieAi = 20
+			elseif bonnieAi < 0 then bonnieAi = 0 end
+
+			setTextString('bonnieAiLvl', bonnieAi)
+
+			if ((funcs.mouseOverlap('chicaLeft') or funcs.mouseOverlap('chicaRight')) and mouseClicked()) then
+				if funcs.mouseOverlap('chicaLeft') then chicaAi = chicaAi - 1
+				else chicaAi = chicaAi + 1 end
+			end
+
+			if chicaAi > 20 then chicaAi = 20
+			elseif chicaAi < 0 then chicaAi = 0 end
+
+			setTextString('chicaAiLvl', chicaAi)
+
+			if ((funcs.mouseOverlap('foxyLeft') or funcs.mouseOverlap('foxyRight')) and mouseClicked()) then
+				if funcs.mouseOverlap('foxyLeft') then foxyAi = foxyAi - 1
+				else foxyAi = foxyAi + 1 end
+			end
+
+			if foxyAi > 20 then foxyAi = 20
+			elseif foxyAi < 0 then foxyAi = 0 end
+
+			setTextString('foxyAiLvl', foxyAi)
+
+			if funcs.mouseOverlap('ready') and mouseClicked() then
+				setDataFromSave('fnaf1', 'night', 7)
+				flushSaveData('fnaf1')
+
+				loadSong('what-day')
+			end
 		end
 	end
 }
@@ -274,7 +453,7 @@ function changeSelection(dir)
 
 	if curSelected < 0 then
 		if not getDataFromSave('fnaf1', 'beatGame', false) then curSelected = 1
-		elseif not getDataFromSave('fnaf1', 'beatCustom', false) then curSelected = 2
+		elseif not getDataFromSave('fnaf1', 'beatNight6', false) then curSelected = 2
 		else curSelected = 3 end 
 	elseif (curSelected > 1 and not getProperty('night6.visible')) or (curSelected > 2 and not getProperty('customNightTxt.visible')) or curSelected > 3 then curSelected = 0 end
 

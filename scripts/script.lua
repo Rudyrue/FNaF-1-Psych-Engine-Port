@@ -1,24 +1,25 @@
 function onCreatePost()
 	luaDebugMode = true
 	initSaveData('fnaf1')
+	addHaxeLibrary('FunkinLua')
+	addHaxeLibrary('Lua_helper', 'llua')
+	addHaxeLibrary('FlxSound', 'flixel.system')
+	addHaxeLibrary('Math')
 	addHaxeLibrary('Application', 'lime.app')
     addHaxeLibrary('Image','lime.graphics')
+
 	setProperty('camGame.visible', false)
 	setProperty('camHUD.visible', false)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransIn', true)
 	setPropertyFromClass('flixel.addons.transition.FlxTransitionableState', 'skipNextTransOut', true)
 	setPropertyFromClass('openfl.Lib', 'application.window.title', "Five Nights at Freddy's")
+	setPropertyFromClass('flixel.FlxG', 'mouse.useSystemCursor', true)
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', true)
+	
 	runHaxeCode([[
-        var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
+		var icon = Image.fromFile(Paths.modFolders('images/fnaf1/icon.png'));
         Application.current.window.setIcon(icon);
-    ]])
 
-	addHaxeLibrary('FunkinLua')
-	addHaxeLibrary('Lua_helper', 'llua')
-	addHaxeLibrary('FlxSound', 'flixel.system')
-	addHaxeLibrary('Math')
-	runHaxeCode([[
 		for(thing in game.luaArray) {
 	 		Lua_helper.add_callback(thing.lua, 'soundLoad', function(tag:String, path:String, ?loop:Bool = false, ?changePitch:Bool = true) {
 				if (Paths.fileExists('sounds/' + path + '.ogg')) {
@@ -80,7 +81,8 @@ end
 function onUpdate() if keyboardJustPressed('ESCAPE') then exitSong() end end
 
 function onDestroy()
-	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine") 
+	setPropertyFromClass("openfl.Lib", "application.window.title", "Friday Night Funkin': Psych Engine")
+	setPropertyFromClass('flixel.FlxG', 'mouse.useSystemCursor', false)
 	setPropertyFromClass('flixel.FlxG', 'mouse.visible', false)
 
 	runHaxeCode([[
