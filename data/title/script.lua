@@ -251,6 +251,11 @@ substatesUpdate = {
 			setTextString('foxyAiLvl', foxyAi)
 
 			if funcs.mouseOverlap('ready') and mouseClicked() then
+				if freddyAi == 1 and bonnieAi == 9 and chicaAi == 8 and foxyAi == 7 then
+					loadSong('golden-freddy')
+					return
+				end
+
 				setDataFromSave('fnaf1', 'night', 7)
 				flushSaveData('fnaf1')
 
