@@ -573,30 +573,30 @@ function onUpdate(elapsed)
 	end
 
 	if camsScroll.valueA == 0 then
-		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
-		setProperty('camsScroll.x', getProperty('camsScroll.x') - ((1 - elapsed) * playbackRate))
+		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
+		setProperty('camsScroll.x', getProperty('camsScroll.x') - (1 * playbackRate))
 
 		if camsScroll.valueB >= 320 then
 			camsScroll.valueA = 1
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 1 then
-		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
+		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
 
 		if camsScroll.valueB >= 100 then
 			camsScroll.valueA = 2
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 2 then
-		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
-		setProperty('camsScroll.x', getProperty('camsScroll.x') + ((1 + elapsed) * playbackRate))
+		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
+		setProperty('camsScroll.x', getProperty('camsScroll.x') + (1 * playbackRate))
 
 		if camsScroll.valueB >= 320 then
 			camsScroll.valueA = 3
 			camsScroll.valueB = 0
 		end
 	elseif camsScroll.valueA == 3 then
-		camsScroll.valueB = camsScroll.valueB + ((1 + elapsed) * playbackRate)
+		camsScroll.valueB = camsScroll.valueB + (1 * playbackRate)
 
 		if camsScroll.valueB >= 100 then
 			camsScroll.valueA = 0
